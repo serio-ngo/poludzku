@@ -1,33 +1,17 @@
 # po ludzku
 
-**GitHub work, in plain words. One task. Whose move. What next.**
-
-po ludzku shows one GitHub task at a time — an issue and its pull request — as a short
-answer anyone can read: what is happening, which stage it is in, whether it is fine,
-whose move it is, and what comes next. Built for teams that ship with AI agents and for
-people who find GitHub's own screens too loud: neurodivergent developers, project
-managers, board members, funders.
-
-Open source by [Fundacja Serio](https://serio.org.pl). Hosted at
-[poludzku.info](https://poludzku.info). No ads, no tracking, no account for public
-repositories.
+A read-only view of GitHub work. Open one task to see what is happening, its stage, whether anything is wrong, whose move it is and what comes next. The project list puts tasks waiting for a person first.
 
 ## Status
 
-Planning. No application code yet. The contracts below are the source of truth.
+Product design. This checkout contains the contracts and acceptance scenarios. The [one-session delivery plan](.prd/delivery.md) defines how to build and verify a runnable candidate.
 
-## Reference
+## Design
 
-- [Product](.prd/product.md) — what it says and does, scope, the one view
-- [Stages](.prd/stages.md) — how GitHub signals become a stage and a move
-- [Interface](.prd/interface.md) — calm UI rules
-- [Tech](.prd/tech.md) — Astro on Cloudflare, GitHub App, caching, reuse
-- [Business and marketing](.prd/business.md) — audience, model, channels, risks
-- [Migration](.prd/migration.md) — replacing the po ludzku newsroom on poludzku.info
-- [Delivery](.prd/delivery.md) — setup, five pull requests, what waits on the owner
+- [Product](.prd/product.md) and [reader outcomes](.prd/business.md)
+- [Stage rules](.prd/stages.md) and [task and project screens](.prd/interface.md)
+- [Architecture and access](.prd/tech.md)
+- [Deployment and link continuity](.prd/migration.md)
 - [Agent instructions](AGENTS.md)
 
-## License
-
-Code: [MIT](LICENSE). Text in `.prd/` and `src/content/`: CC BY 4.0.
-The „po ludzku” and „serio” names and marks are not licensed for reuse.
+The project uses the [Apache License, Version 2.0](LICENSE).

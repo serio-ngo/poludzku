@@ -1,36 +1,32 @@
-# Delivery
+# One-session delivery
 
-The full product ships in five pull requests built with the local serio-focus `deliver` flow (architect, tester, coder, reviewer, then `/code-review`). The owner merges; nothing else waits on the owner except the consents and the one switch listed below.
+Deliver one locally runnable release candidate in a single working session. Use one branch, one integrated review and one acceptance run. A new contributor must be able to start the candidate and exercise both languages without access to a live account. Public release has its own acceptance in [migration.md](migration.md).
 
-## Setup, done by the agent
+## Critical design decisions
 
-| Step                                     | How                                                                                                                                                                                                              | Owner's part                                                                                                         |
-| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| Register the GitHub App                  | Manifest flow in the built-in browser from the committed `app-manifest.json`; the agent exchanges the code with `POST /app-manifests/{code}/conversions` and pipes the key and secret into `wrangler secret put` | A "yes" in chat before the agent clicks Create and Install: GitHub requires an organisation owner's session for both |
-| Connect the repository to Workers Builds | Cloudflare dashboard in the built-in browser; there is no API to connect a repository yet ([workers-sdk 12058](https://github.com/cloudflare/workers-sdk/issues/12058))                                          | A "yes" in chat                                                                                                      |
-| `main` ruleset                           | `gh api` as the organisation owner: code-owner approval of the latest push, human-only updates                                                                                                                   | None beyond the same "yes"                                                                                           |
-| Join the lifecycle after release 1       | Topic `lifecycle`, then `node lifecycle/console-mcp.mjs --setup-all`                                                                                                                                             | None                                                                                                                 |
+| Observed problem | Consequence for the reader | Decision and how to test it |
+| --- | --- | --- |
+| In the operator flow, a green change can reach the approval action before a request for human intervention is considered. | A blocked task looks ready. | Compute process stage, health and next mover separately. A green change waiting for help stays at stage 7, shows the block and points to a person. |
+| The operator view collects commands, setup state and activity across repositories. Hiding controls would leave that data in the response. | A read-only screen could still expose unrelated work. | Construct a new task result from an explicitly requested repository. Inspect the actual response and browser storage for a synthetic record belonging to a second repository. |
+| When a query fails, an empty result can look like a quiet project. Missing checks can also look like successful checks. | A reader stops looking precisely when the system has lost visibility. | Distinguish a successful empty list, an unavailable list and incomplete task evidence. Fail one read and verify the appropriate message. |
+| Matching a run by title lets two identically named tasks share a status. Reading only the most recent runs can also miss the relevant one. | A task can report that an agent is working while the reader actually needs to act. | Match the task and current revision. Give two synthetic tasks the same title, start a run for one and verify that only its mover changes. |
+| The earlier design joined five pull requests, account registration, a domain switch and a content migration to the first working screen. | Review and account setup sat on the critical path to testing the product. | Build one vertical slice first and exercise it with synthetic responses. Finish the remaining routes and access paths in the same candidate. Verify account-dependent publication separately. |
 
-If the built-in browser is not signed in to GitHub or Cloudflare, signing in there is the owner's only extra step.
+## Build order
 
-## Pull requests
+| Step | Deliverable | Exit check in the same session |
+| --- | --- | --- |
+| 1. Model the task | Normalize synthetic issue, pull request, review, run and check inputs. Implement the stage rules as a pure function. | Run `node --test` over both presets, custom labels and the precedence cases in [stages.md](stages.md). Include two tasks with the same title and different runs. |
+| 2. Read one task end to end | Serve a task through the real route, data adapter and HTML templates. Add the project list, branch resolution, PL/EN, introductory content and terms. | Open the same task from the list, a pull request and its branch. In both languages the reader sees the same status, the time of the read and one next step. |
+| 3. Wire repository access | Implement the GitHub reads, installation checks, sign-in, session expiry, sign-out and cache rules in [tech.md](tech.md). Use a synthetic upstream at the HTTP boundary for local verification. | With two separate browser sessions, exercise public, authorized private, denied, expired, signed-out and public-to-private cases. Check status, body, headers and cache behavior, including the second request. |
+| 4. Verify the whole candidate | Run the production build, start its preview, run the browser and accessibility suites, and test the redirect mechanism against an invented URL inventory. Fix findings against this candidate. | A fresh reviewer checks the complete diff. Record exact commands, pass/fail counts, limits and any release-only checks. Keep all test evidence synthetic. |
 
-Each has at most five acceptance checks, each proved by a test or a gate.
+## Acceptance
 
-| #   | Pull request                                                                                                            | Done when                                                                                                                                                                             |
-| --- | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | Site: Astro and the Cloudflare adapter, tokens, layout and gates from the newsroom, `/`, `/<slug>`, `/regulamin`, `/en` | `npm run gates` green; pa11y zero errors; Lighthouse accessibility 100; Workers Builds preview serves `/` and one article                                                             |
-| 2   | Engine: `stages.mjs` with both presets, the bot rule and the `.github/poludzku.yml` mapping                             | Every row of [stages.md](stages.md) and its listed edge cases pass as fixtures under `node --test`                                                                                    |
-| 3   | Public pages: App token, the two reads, cache, the task page, the project page, the branch redirect                     | Playwright on recorded fixtures shows the five answers for stages 1, 4 and 7 and a stuck task; the project list puts person moves first; a branch `agent/<N>-x` redirects to task `N` |
-| 4   | Sign-in: Astro sessions, the user token, private repositories, sign-out                                                 | A private fixture repository is readable only after sign-in; no response built with a user token is cached; sign-out deletes the session                                              |
-| 5   | Migration: `/newsroom`, the 301 map from the 49 newsroom URLs, the custom domain in `wrangler.jsonc`                    | `lychee` over the old sitemap gives only 301 → 200; deployed on `*.workers.dev` first                                                                                                 |
+1. A fresh checkout installs from its lockfile, builds and starts via documented commands. A synthetic task and project list are reachable through their normal routes with no credentials.
+2. The examples in [stages.md](stages.md) pass. A failed read never produces a successful empty list, and unrelated activity never advances a task.
+3. In PL and EN, Playwright verifies the five answers, person-first ordering, standalone and ambiguous pull requests, branch resolution, keyboard navigation and failure views. Check the page budgets in [tech.md](tech.md) on the production preview.
+4. Point two server instances at the same session store. Confirm that the same signed-in cookie can read a synthetic private title through both. Sign out through the first, then replay the saved cookie through the second. It must disclose no private title. Also verify denial after revoking repository access, removing an installation and changing a warmed public repository to private.
+5. Inspect the release tree, rendered demo and generated assets for identifiers and records. Verify the license and local document links. Record build proof, preview proof, live integration proof and public release proof separately; each needs its own observation.
 
-Then one hand-made pull request in `serio-ngo/ops`: the console loads `stages.mjs` from this repository and drops its own `derive()`.
-
-## The one switch
-
-Moving `poludzku.info` from the newsroom Worker to this one replaces what readers see, so the agent asks once on the day, then detaches the domain from `news-interface` and deploys. Then [migration.md](migration.md) steps 5 and 6 follow without the owner.
-
-## Owner's total
-
-Two consents, five merges in this repository, one merge in ops, one "go" for the switch. No issue, spec, review or test approval is asked of the owner for release 1.
+When live credentials are already authorized, verify an opted-in task through the same adapter. Otherwise the session can prove the candidate against the synthetic upstream; live sign-in, production redirects and the domain switch remain release checks. Never archive an existing service on the strength of a fixture run.

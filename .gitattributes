@@ -1,23 +1,6 @@
-# Line endings are LF in the repository, always.
-#
-# Without this, `prettier --write .` on Windows rewrote every file it touched from LF to
-# CRLF, and `git status` then showed forty files as modified with zero content changes.
-# That is not cosmetic: the closeout review of 2026-09-06 already named whole-repo
-# formatting churn in the same tree as logic changes as the thing that hides a review.
-# A diff nobody can read is a review nobody performs.
-#
-# Checkout is normalised too (no `eol=crlf` for Windows): every tool in this repo —
-# node, prettier, astro — handles LF on Windows, and one convention beats two.
 * text=auto eol=lf
-
-# Binary, never touched.
 *.png binary
 *.jpg binary
 *.woff binary
 *.woff2 binary
-*.ico binary
-
-# The ICS endpoint emits CRLF because RFC 5545 requires it. The generated file never
-# reaches git (dist/ is ignored), but the fixture strings in the test do — and a test
-# that asserts CRLF must not have its own source rewritten.
 *.ics -text

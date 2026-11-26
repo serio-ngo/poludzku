@@ -1,74 +1,33 @@
 # Product
 
-**po ludzku answers five questions about one GitHub task, in this order: what is happening, which stage, is it fine, whose move, what next.** Everything else is a link to GitHub.
+The console shows one GitHub task in Polish or English. It answers five questions in order. What is happening? Which stage is it in? Is everything okay? Whose move is it? What happens next? The answers use plain language and link to GitHub for action. The console reads GitHub without writing to it.
 
-Brand `po ludzku`, address `poludzku.info`, repository `serio-ngo/poludzku`. Polish and English UI from the first release; Polish is the root path, English lives under `/en`. Documents are English.
+## One task
 
-## Who it is for
+An issue is a task. A pull request with exactly one readable closing issue in the same repository resolves to that issue. Pull requests with no such issue or multiple such issues are standalone tasks. Mentions and cross-repository links do not establish a task. An issue's task view includes all pull requests that resolve to it.
 
-| Reader                                      | Job                                                     | What they must never need                  |
-| ------------------------------------------- | ------------------------------------------------------- | ------------------------------------------ |
-| Developer running AI agents                 | See where a task stopped and whether the move is theirs | Reading a run log to learn the stage       |
-| Project manager, team lead                  | Know what to unblock today                              | A GitHub account for a public repository   |
-| Board member, funder, partner               | Trust that work moves, from a link                      | Any technical word                         |
-| Neurodivergent person on any of these roles | One thing on screen, a calm tone, the next step         | Counting, scanning tables, decoding colour |
+A branch with exactly one matching open pull request redirects to that pull request's canonical task. With no matching open pull request, a branch named `agent/<N>-…` redirects to issue `N` if that issue can be read. Multiple matches or a branch with no resolvable task show a localized message and a link to GitHub. The branch never receives its own task state.
 
-## The unit is a task, not a branch
+The project page lists each canonical task once, with person-owned moves first and most recent activity first within each group. Its rows use the same derived result as the task page. [Stage and state rules](stages.md)
 
-A task is one issue and the pull requests that fix it. GitHub numbers issues and pull requests in one sequence per repository, so one number opens either: `/gh/<owner>/<repo>/<number>`. A pull request number resolves to its task when the body says `Fixes #N`; without that, the pull request is the task.
-
-A branch is never a view of its own. `/gh/<owner>/<repo>/tree/<branch>` resolves to the open pull request of that branch, or to issue `N` for a branch named `agent/<N>-…`, and redirects. A branch with neither shows "Ta gałąź nie ma jeszcze zadania" and a link to GitHub.
+List open issues and open pull requests. Follow pagination within the request budget. If pages remain, label the list as partial, rank only the rows read and link to the repository on GitHub. A partial page with zero confirmed tasks must say that the list is incomplete. Test this with a person-owned task on a later page.
 
 ## Routes
 
-| Route                              | Shows                                                                                                                                      |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `/`                                | What the service does, one custom text block from `src/content/home.md`, the foundation's own projects as tabs                             |
-| `/<slug>`                          | An article or custom page from `src/content/pages/` — the only free-text space                                                             |
-| `/gh/<owner>/<repo>`               | Project: tabs of projects the viewer can see, then **one** list: tasks whose move is a person's first, then the rest. Each row is one line |
-| `/gh/<owner>/<repo>/<number>`      | The task: the five answers, the stage strip, then technical detail folded under "Szczegóły"                                                |
-| `/gh/<owner>/<repo>/tree/<branch>` | Redirect only, see above                                                                                                                   |
-| `/zaloguj`, `/wyloguj`             | GitHub sign-in and sign-out; no page of their own                                                                                          |
-| `/regulamin`                       | The only legal page: publisher, what the session stores and for how long, no tracking                                                      |
+| Route | View |
+| --- | --- |
+| `/` | A short introduction from `src/content/home.md`, one synthetic sample and an entry point for opening a GitHub repository. |
+| `/<slug>` | A Markdown article from `src/content/pages/`. |
+| `/gh/<owner>/<repo>` | One list for the repository the viewer opened. |
+| `/gh/<owner>/<repo>/<number>` | The canonical task, its five answers, stage strip and folded technical details. |
+| `/gh/<owner>/<repo>/tree/<branch>` | Canonical redirect or the unresolved branch view. |
+| `/zaloguj`, `/wyloguj` | Start GitHub sign-in or sign out. |
+| `/regulamin` | Terms covering the publisher, session data, retention and tracking policy. |
 
-Every route is a shareable URL; `/en` mirrors each one. Nothing is stored in the browser except the session cookie of a signed-in viewer.
-
-## The five answers
-
-| Question                 | Source                                                                 | Example                      |
-| ------------------------ | ---------------------------------------------------------------------- | ---------------------------- |
-| Co się dzieje?           | The stage note, see [stages.md](stages.md)                             | "Agent pisze testy."         |
-| Na jakim etapie?         | Stage 1–7 of the repository's preset                                   | "4 z 7 · Testy"              |
-| Czy wszystko w porządku? | Checks and the parked state, never the stage alone                     | "Tak" / "Coś się zatrzymało" |
-| Czyj ruch?               | The stage's owner: `Ty`, a named person, `agent`, `automat`, or `nikt` | "Ruch: Adrian"               |
-| Co dalej?                | The next stage, one sentence                                           | "Potem przeglądasz testy."   |
-
-"Czyj ruch" is the product. It is the answer the analysis behind this project missed: a status without an owner tells a reader nothing to do.
-
-## Scope
-
-| We do                                                                                          | We do not do                                                              |
-| ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| One task per screen, one list per project                                                      | Dashboards, charts, burndown, velocity, people metrics                    |
-| Read GitHub: issues, pull requests, labels, reviews, checks, workflow runs, lifecycle comments | Write to GitHub — no merge, label or review buttons (v1)                  |
-| The Serio lifecycle as the built-in preset; a label-and-checks preset for everyone else        | A new label system any team must adopt                                    |
-| Public repositories without login; private ones with GitHub sign-in                            | Share links that open a private repository to someone GitHub would refuse |
-| An article space on the same site                                                              | Comments, accounts of our own, notifications, e-mail                      |
-
-Commits and deployments appear only inside "Szczegóły", only as links. Time and people statistics are out permanently: they invite comparison, which this audience does not need.
+Polish is served at the root and English under `/en`. Both variants preserve the same routes. The sample uses synthetic data and is visibly identified. The home page has no organization tabs or repository directory.
 
 ## Access
 
-- **Public repository**: open by URL, no login, once its organisation has installed the po ludzku GitHub App. A repository without the App is not shown: anonymous GitHub reads allow 60 requests an hour per server address, which one busy page exhausts, and nobody should find their organisation's work on poludzku.info without having opted in.
-- **Private repository**: "Zaloguj przez GitHub". The viewer sees exactly what GitHub lets their own account see — the server asks GitHub with the viewer's user token, never with a wider one. A person without a GitHub account cannot see a private repository; that is a GitHub rule, not ours.
-- An organisation opts in by installing the App, read-only and without access to code: the permissions are in [tech.md](tech.md#the-github-app).
-- A signed-in viewer stays signed in for the 8 hours GitHub gives the token, then signs in again with one click.
-- Every page prints when its data was read ("stan z 10:42") and a reload link. Nothing refreshes by itself.
+The viewer opens a specific repository that has opted in through installation of the read-only GitHub App. An opted-in public repository can be read without signing in. A private repository requires GitHub sign-in and a read using the viewer's token. GitHub must authorize that viewer before any private task or repository information is returned. An unavailable repository view reveals no private metadata. Private and viewer-specific responses use `Cache-Control: private, no-store`.
 
-## Still open
-
-| Question                                                                 | Default if unanswered                                                            |
-| ------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
-| Write actions (approve spec, lock tests) as in the ops lifecycle console | Not in v1; the console stays the operator tool                                   |
-| Other forges (GitLab, Forgejo)                                           | Not planned; the stage engine stays forge-neutral data in, so a port is possible |
-| Name abroad                                                              | „po ludzku” stays; the English tagline carries meaning                           |
+The browser stores only the signed-in session cookie. There is no tracking. Live tool pages use `noindex`, show when GitHub data was read and provide a manual reload link. The interface supports keyboard use, conveys stage and state in text and keeps technical details folded. [Interface contract](interface.md)

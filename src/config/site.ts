@@ -1,6 +1,6 @@
 export const SITE = {
     url: "https://poludzku.info",
-    app: { id: "", slug: "", clientId: "" },
+    app: { id: "5942860", slug: "po-ludzku", clientId: "Iv23lihqlowVk4ANSVIO" },
     name: "po ludzku",
     themeColor: "#faf7f2",
     cacheSeconds: 60,

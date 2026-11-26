@@ -18,12 +18,16 @@ const open = (url) =>
     ).unref();
 const esc = (s) => s.replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("<", "&lt;");
 const putSecret = (name, value) => {
-    const r = spawnSync("npx", ["wrangler", "secret", "put", name, "--name", "poludzku"], {
-        input: value,
-        stdio: ["pipe", "inherit", "inherit"],
-        shell: true,
-        env: { ...process.env, CLOUDFLARE_ACCOUNT_ID: "8011c8ad26f19291388f592410d2d9fd" },
-    });
+    const r = spawnSync(
+        "npx",
+        ["wrangler", "versions", "secret", "put", name, "--name", "poludzku"],
+        {
+            input: value,
+            stdio: ["pipe", "inherit", "inherit"],
+            shell: true,
+            env: { ...process.env, CLOUDFLARE_ACCOUNT_ID: "8011c8ad26f19291388f592410d2d9fd" },
+        },
+    );
     if (r.status !== 0) throw new Error(`wrangler secret put ${name} failed`);
 };
 

@@ -12,6 +12,7 @@
     "https://poludzku.info/sign-in/callback",
     "http://localhost:4321/sign-in/callback"
   ],
+  "single_file_name": ".github/poludzku.yml",
   "request_oauth_on_install": false,
   "setup_on_update": false,
   "default_events": [],

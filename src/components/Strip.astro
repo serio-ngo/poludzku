@@ -11,7 +11,7 @@ interface Props {
 const { view, lang } = Astro.props;
 const d = t(lang);
 const open = view.outcome === "open";
-const total = view.stage?.total ?? (view.preset === "generic" ? 5 : 7);
+const total = view.stage?.total ?? (view.preset === "generic" ? 5 : view.preset === "lifecycle" ? 7 : 0);
 const cur = open ? (view.stage?.index ?? -1) : view.outcome === "done" ? total + 1 : -1;
 const unknown = open && !view.stage;
 const name = stageName(lang, view.stageNameKey);
@@ -22,20 +22,22 @@ const hideWord = open && !unknown && !!names;
 ---
 
 <div class="strip" style={`--n:${total}`}>
-    <ol aria-label={label}>
-        {
-            Array.from({ length: total }, (_, k) => {
-                const i = k + 1;
-                const s = i < cur ? "done" : i === cur ? "cur" : "later";
-                return (
-                    <li class={s} aria-current={s === "cur" ? "step" : undefined}>
-                        <span class="dot">{s === "done" ? <Check size={20} aria-hidden="true" /> : i}</span>
-                        {names && <span class="name">{names[i]}</span>}
-                    </li>
-                );
-            })
-        }
-    </ol>
+    {
+        total > 0 && (
+            <ol aria-label={label}>
+                {Array.from({ length: total }, (_, k) => {
+                    const i = k + 1;
+                    const s = i < cur ? "done" : i === cur ? "cur" : "later";
+                    return (
+                        <li class={s} aria-current={s === "cur" ? "step" : undefined}>
+                            <span class="dot">{s === "done" ? <Check size={20} aria-hidden="true" /> : i}</span>
+                            {names && <span class="name">{names[i]}</span>}
+                        </li>
+                    );
+                })}
+            </ol>
+        )
+    }
     <p class:list={{ hide: hideWord }}>{unknown ? <Glyph name="circle-help" lang={lang} size={28} /> : word}</p>
 </div>
 

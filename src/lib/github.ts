@@ -325,11 +325,13 @@ export function createGithub(o: {
     viewerToken?: string;
     viewerLogin?: string;
     cache?: Cache;
+    /** True only when the request itself came to a loopback host. */
+    loopback?: boolean;
 }) {
     const { env, viewerLogin, cache } = o;
     const local = env.SITE_ORIGIN !== SITE.url;
     // Local only: the developer's own `gh` token, read on the server, never in production.
-    const devToken = local && env.GITHUB_UPSTREAM === "gh" ? env.GITHUB_DEV_TOKEN : undefined;
+    const devToken = local && o.loopback && env.GITHUB_UPSTREAM === "gh" ? env.GITHUB_DEV_TOKEN : undefined;
     const viewerToken = o.viewerToken ?? devToken;
     // Never synthetic in production, whatever else is set.
     const synthetic =

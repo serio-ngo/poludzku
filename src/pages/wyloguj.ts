@@ -5,8 +5,8 @@ import { clearSessionCookie, deleteSession, readSessionId, safeNext } from "../l
 
 export const prerender = false;
 export const ALL: APIRoute = async ({ request, url }) => {
-    if (request.method !== "GET" && request.method !== "POST")
-        return new Response(null, { status: 405, headers: { allow: "GET, POST" } });
+    // POST only: a cross-site GET (an image tag) must not end someone's session.
+    if (request.method !== "POST") return new Response(null, { status: 405, headers: { allow: "POST" } });
     const id = readSessionId(request);
     if (id) await deleteSession(env, id);
     const next = safeNext(url.searchParams.get("next") ?? defaultNext(url.pathname));

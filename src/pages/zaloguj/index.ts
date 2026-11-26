@@ -1,12 +1,13 @@
 import type { APIRoute } from "astro";
 import { env } from "cloudflare:workers";
-import { authorizeUrl, callbackUrl, defaultNext, isSynthetic, nextCookie, originOf, syntheticCode } from "../../lib/auth.ts";
+import { authorizeUrl, callbackUrl, defaultNext, isLocalGh, isSynthetic, nextCookie, originOf, syntheticCode } from "../../lib/auth.ts";
 import { makeState, safeNext } from "../../lib/session.ts";
 
 export const prerender = false;
 export const GET: APIRoute = ({ url }) => {
     const origin = originOf(url, env);
     const next = safeNext(url.searchParams.get("next") ?? defaultNext(url.pathname));
+    if (isLocalGh(env)) return new Response(null, { status: 302, headers: { location: next } });
     const { state, cookie } = makeState(origin);
     const callback = callbackUrl(origin);
     const to = isSynthetic(env)

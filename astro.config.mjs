@@ -28,6 +28,8 @@ export default defineConfig({
     site: "https://poludzku.info",
     output: "server",
     adapter: cloudflare({ imageService: "passthrough" }),
+    // Pre-bundle at start: late discovery reloads the dev Worker and aborts the first requests.
+    vite: { ssr: { optimizeDeps: { include: ["universal-github-app-jwt", "@lucide/astro"] } } },
     session: false,
     trailingSlash: "never",
     build: { format: "directory" },

@@ -42,6 +42,7 @@ export async function loadGh(Astro: AstroGlobal, lang: Lang): Promise<Response |
         viewerToken: viewer?.token,
         viewerLogin: viewer?.login,
         cache: viewer || typeof caches === "undefined" ? undefined : (caches as any).default,
+        loopback: ["localhost", "127.0.0.1", "[::1]"].includes(Astro.url.hostname),
     });
     const failed = (reason: keyof typeof REASON) => {
         const kind = REASON[reason];

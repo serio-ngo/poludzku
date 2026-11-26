@@ -2,7 +2,7 @@
 title: Regulamin
 description: Zasady korzystania z po ludzku, dane sesji i prawa użytkownika.
 lang: pl
-slug: regulamin
+slug: terms
 ---
 
 Obowiązuje od 26 listopada 2026 r.

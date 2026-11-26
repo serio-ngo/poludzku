@@ -19,11 +19,11 @@ const other = lang === "en" ? path.replace(/^\/en(?=\/|$)/, "") || "/" : path ==
         <a class="gl lang" href={other} hreflang={lang === "en" ? "pl" : "en"}>{t(lang).nav.lang}</a>
         {
             signedIn ? (
-                <form method="post" action="/wyloguj">
+                <form method="post" action="/sign-out">
                     <button class="gl" type="submit"><Glyph name="log-out" lang={lang} /></button>
                 </form>
             ) : (
-                <a class="gl" href={`/zaloguj?next=${encodeURIComponent(path)}`}><Glyph name="log-in" lang={lang} /></a>
+                <a class="gl" href={`/sign-in?next=${encodeURIComponent(path)}`}><Glyph name="log-in" lang={lang} /></a>
             )
         }
     </nav>

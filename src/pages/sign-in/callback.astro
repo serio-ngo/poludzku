@@ -47,7 +47,7 @@ const en = lang === "en";
 <Base title={t(lang).unavailable[reason]} lang={lang} noindex>
     <TopBar slot="top" lang={lang} path={en ? "/en" : "/"} signedIn={false} />
     <div class="pl-page">
-        <Unavailable kind={reason} lang={lang} action={{ href: `/zaloguj?next=${encodeURIComponent(next)}`, glyph: reason === "expired" ? "log-in" : "refresh-cw" }} />
+        <Unavailable kind={reason} lang={lang} action={{ href: `/sign-in?next=${encodeURIComponent(next)}`, glyph: reason === "expired" ? "log-in" : "refresh-cw" }} />
     </div>
     <Footer slot="foot" lang={lang} />
 </Base>

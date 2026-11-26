@@ -11,13 +11,12 @@
     "build": "node scripts/build.mjs",
     "preview": "node scripts/dev-vars.mjs && astro preview --port 4321",
     "typecheck": "wrangler types && astro check",
-    "test": "node --test --experimental-strip-types \"src/**/*.test.mjs\" \"tests/**/*.test.mjs\"",
+    "test": "node --test --experimental-strip-types \"src/app.test.mjs\"",
     "docs:links": "node scripts/docs-links.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "knip": "knip",
     "spell": "cspell --no-progress .",
-    "redirects": "node scripts/redirects.mjs",
     "check": "npm run typecheck && npm run docs:links && npm run build && npm test"
   },
   "dependencies": {

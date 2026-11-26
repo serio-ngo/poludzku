@@ -79,7 +79,7 @@ export function makeState(origin: string) {
     const state = newId();
     return {
         state,
-        cookie: `pl_oauth=${state}; ${attrs(origin, 600).replace("Path=/;", "Path=/zaloguj;")}`,
+        cookie: `pl_oauth=${state}; ${attrs(origin, 600).replace("Path=/;", "Path=/sign-in;")}`,
     };
 }
 export function checkState(request: Request, param: string | null) {

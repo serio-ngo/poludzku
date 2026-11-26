@@ -3,7 +3,7 @@ import { env } from "cloudflare:workers";
 import { clearSessionCookie, getSession, readSessionId } from "./lib/session.ts";
 import { SITE } from "./config/site.ts";
 
-const DYNAMIC = /^(\/en)?\/(gh(\/|$)|zaloguj|wyloguj$|avatar(\/|$)|(?:open|otworz)$)/;
+const DYNAMIC = /^(\/en)?\/(gh(\/|$)|sign-in|sign-out$|avatar(\/|$)|open$)/;
 
 export const onRequest = defineMiddleware(async ({ request, url, locals }, next) => {
     const id = readSessionId(request);

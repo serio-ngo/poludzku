@@ -14,7 +14,7 @@ export type Repo = {
     runs: Def[];
 };
 
-export const BODY = "AC1: Opis kryterium.";
+export const BODY = "AC1: Criterion text.";
 const sha = (n: number) => n.toString(16).padStart(2, "0").repeat(20);
 
 const issue = (n: number, title: string, o: Def = {}): Def => ({
@@ -52,7 +52,7 @@ const wrote = bot("<!-- write-tests v1 spec={hash} -->", 3);
 const approved = { labels: ["spec-ok"], comments: [ready, wrote] };
 
 const draft = (n: number, closes: number, o: Def = {}) =>
-    pr(n, `Testy ${closes}`, {
+    pr(n, `Tests ${closes}`, {
         closes: [closes],
         comments: [bot(`<!-- write-tests v1 run=${n + 100} -->`, 3)],
         ...o,
@@ -140,30 +140,30 @@ export function makeWorld(): Record<string, Repo> {
         "website",
         { topics: ["lifecycle"] },
         [
-            issue(1, "Dodaj mapę strony"),
-            issue(2, "Dodaj wyszukiwarkę", { labels: ["spec-review"] }),
-            issue(3, "Dodaj galerię", { comments: [ready], assignees: ["ola"] }),
-            issue(4, "Dodaj stopkę", { labels: ["spec-ok"], comments: [ready] }),
-            issue(5, "Dodaj stopkę", {
+            issue(1, "Add sitemap"),
+            issue(2, "Add search", { labels: ["spec-review"] }),
+            issue(3, "Add gallery", { comments: [ready], assignees: ["ola"] }),
+            issue(4, "Add footer", { labels: ["spec-ok"], comments: [ready] }),
+            issue(5, "Add footer", {
                 labels: ["spec-ok"],
                 comments: [ready],
                 assignees: ["ben"],
             }),
-            issue(6, "Dodaj kontakt", approved),
-            issue(7, "Dodaj opinie", approved),
-            issue(8, "Dodaj newsletter", approved),
-            issue(9, "Dodaj stronę zespołu", {
+            issue(6, "Add contact", approved),
+            issue(7, "Add reviews", approved),
+            issue(8, "Add newsletter", approved),
+            issue(9, "Add team page", {
                 ...approved,
                 labels: ["spec-ok", "needs-human"],
                 assignees: ["ola"],
             }),
-            issue(10, "Dodaj kalendarz", approved),
-            issue(11, "Dodaj regulamin", { state: "CLOSED", reason: "COMPLETED" }),
-            issue(12, "Dodaj nagłówek"),
-            issue(13, "Dodaj blog", { state: "CLOSED", reason: "NOT_PLANNED" }),
-            issue(14, "Dodaj mapę dojazdu"),
-            issue(15, "Dodaj cennik"),
-            issue(34, "Popraw kontrast"),
+            issue(10, "Add calendar", approved),
+            issue(11, "Add terms", { state: "CLOSED", reason: "COMPLETED" }),
+            issue(12, "Add header"),
+            issue(13, "Add blog", { state: "CLOSED", reason: "NOT_PLANNED" }),
+            issue(14, "Add directions"),
+            issue(15, "Add pricing"),
+            issue(34, "Fix contrast"),
         ],
         [
             draft(16, 6, { reviewers: ["ola"] }),
@@ -171,9 +171,9 @@ export function makeWorld(): Record<string, Repo> {
             reviewed(18, 8, { draft: false, reviewers: ["ola"], checks: ci("SUCCESS") }),
             reviewed(19, 9, { draft: false, checks: ci("SUCCESS") }),
             reviewed(20, 10, { draft: false, checks: ci("FAILURE") }),
-            pr(30, "Poprawka literówek", { draft: false, reviewers: ["ben"] }),
-            pr(31, "Poprawka wspólna", { draft: false, closes: [14, 15] }),
-            pr(32, "Poprawka kontrastu", {
+            pr(30, "Fix typos", { draft: false, reviewers: ["ben"] }),
+            pr(31, "Shared fix", { draft: false, closes: [14, 15] }),
+            pr(32, "Contrast fix", {
                 head: "fix-contrast",
                 draft: false,
                 closes: [34],
@@ -190,16 +190,16 @@ export function makeWorld(): Record<string, Repo> {
         "store",
         {},
         [
-            issue(1, "Dodaj koszyk"),
-            issue(2, "Dodaj płatności"),
-            issue(3, "Dodaj wysyłkę"),
-            issue(4, "Dodaj zwroty"),
-            issue(5, "Dodaj oceny"),
-            issue(6, "Dodaj kupony"),
+            issue(1, "Add cart"),
+            issue(2, "Add payments"),
+            issue(3, "Add shipping"),
+            issue(4, "Add returns"),
+            issue(5, "Add ratings"),
+            issue(6, "Add coupons"),
         ],
         [
-            pr(12, "Płatności", { closes: [2] }),
-            pr(13, "Wysyłka", { draft: false, closes: [3], checks: ci("PENDING") }),
+            pr(12, "Payments", { closes: [2] }),
+            pr(13, "Shipping", { draft: false, closes: [3], checks: ci("PENDING") }),
             pr(14, "Zwroty", {
                 draft: false,
                 closes: [4],
@@ -213,7 +213,7 @@ export function makeWorld(): Record<string, Repo> {
                 reviews: [
                     {
                         state: "CHANGES_REQUESTED",
-                        body: "Popraw",
+                        body: "Fix",
                         sha: sha(15),
                         login: "ben",
                         at: 4,
@@ -227,28 +227,28 @@ export function makeWorld(): Record<string, Repo> {
     add(
         "custom",
         {
-            config: "stages:\n  - name: Pomysł\n    name_en: Idea\n    label: idea\n    mover: person\n  - name: Prace\n    name_en: Work\n    label: prace\n    mover: agent\n  - name: Odbiór\n    label: odbior\n    mover: person\n",
+            config: "stages:\n  - name: Idea\n    name_en: Idea\n    label: idea\n    mover: person\n  - name: Work\n    name_en: Work\n    label: work\n    mover: agent\n  - name: Review\n    label: review\n    mover: person\n",
         },
         [
-            issue(1, "Pomysł A", { labels: ["idea"], assignees: ["ola"] }),
-            issue(2, "Prace B", { labels: ["prace"] }),
-            issue(3, "Odbiór C", { labels: ["odbior"], assignees: ["ben"] }),
+            issue(1, "Idea A", { labels: ["idea"], assignees: ["ola"] }),
+            issue(2, "Work B", { labels: ["work"] }),
+            issue(3, "Review C", { labels: ["review"], assignees: ["ben"] }),
             issue(4, "Bez etykiety"),
         ],
     );
     add("private", { private: true, access: ["ola"] }, [
-        issue(1, "Tajne zadanie"),
-        issue(2, "Drugie tajne zadanie"),
+        issue(1, "Secret task"),
+        issue(2, "Second secret task"),
     ]);
     add("empty", {});
     add(
         "many",
         { pageSize: 2 },
         Array.from({ length: 30 }, (_, i) =>
-            issue(i + 1, `Zadanie ${i + 1}`, i + 1 === 29 ? { assignees: ["ola"] } : {}),
+            issue(i + 1, `Task ${i + 1}`, i + 1 === 29 ? { assignees: ["ola"] } : {}),
         ),
     );
     add("outage", { fail: true });
-    add("no-app", { installationId: null }, [issue(1, "Zadanie")]);
+    add("no-app", { installationId: null }, [issue(1, "Task")]);
     return Object.fromEntries(repos.map((r) => [r.full, r]));
 }

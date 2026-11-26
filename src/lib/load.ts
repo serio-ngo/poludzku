@@ -24,7 +24,7 @@ export async function loadGh(Astro: AstroGlobal, lang: Lang): Promise<Response |
     const prefix = lang === "en" ? "/en" : "";
     const base = `${prefix}/gh/${owner}/${repo}`;
     const path = Astro.url.pathname;
-    const signIn: Action = { href: `/zaloguj?next=${encodeURIComponent(path)}`, glyph: "log-in" };
+    const signIn: Action = { href: `/sign-in?next=${encodeURIComponent(path)}`, glyph: "log-in" };
     const fail = (kind: Kind, action?: Action): Page => {
         Astro.response.status = STATUS[kind]!;
         return { page: "unavailable", kind, action };

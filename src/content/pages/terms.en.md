@@ -2,7 +2,7 @@
 title: Terms
 description: How po ludzku may be used, what session data it keeps and your rights.
 lang: en
-slug: regulamin
+slug: terms
 ---
 
 In force from 26 November 2026.

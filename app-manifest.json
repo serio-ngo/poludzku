@@ -9,8 +9,8 @@
   },
   "redirect_url": "http://localhost:4321/",
   "callback_urls": [
-    "https://poludzku.info/zaloguj/callback",
-    "http://localhost:4321/zaloguj/callback"
+    "https://poludzku.info/sign-in/callback",
+    "http://localhost:4321/sign-in/callback"
   ],
   "request_oauth_on_install": false,
   "setup_on_update": false,

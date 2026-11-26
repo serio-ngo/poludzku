@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.astro/
+.wrangler/
+.dev.vars
+.dev.vars.*
+screenshots/
+test-results/
+playwright-report/
+.playwright-profile/
+*.pem
+worker-configuration.d.ts

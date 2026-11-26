@@ -1,0 +1,174 @@
+/* Fundacja Serio shared base: the reset and the chrome classes that are the same rule in every
+ * repo of the family. Import after tokens.css and semantic.css. Everything whose value differs
+ * between repos — `body`, `a`, `::selection`, the list reset — deliberately stays out; see
+ * README §Styles. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+}
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--weight-semibold);
+  /* The display scale is the consumer's: poludzku sets -0.02em/1.22, the magazines -0.01em/1.15.
+   * The fallbacks keep a heading typeset rather than untracked if a repo forgets to declare them. */
+  letter-spacing: var(--tracking-tight, -0.01em);
+  line-height: var(--leading-snug, 1.2);
+  text-wrap: balance;
+}
+p {
+  margin: 0;
+}
+img {
+  max-width: 100%;
+  height: auto;
+}
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: var(--border-thick) solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* The page measure: one container, one gutter, everywhere. */
+.pl-page {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding-inline: var(--page-gutter);
+}
+
+/* Small mono caps — kickers, column heads, section labels. */
+.pl-label {
+  font: var(--type-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+/* The marker band at rest (the wipe lives on .pl-t in tokens.css). `--marker-pad` is the repo's
+ * input: an opaque highlighter wants a little air around the word, a translucent one does not. */
+.pl-mark {
+  background: var(--marker-band);
+  padding-inline: var(--marker-pad);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* The family's hoverable row: a rule above, a 3px edge that lights on hover and keyboard focus.
+ * `--row-edge` is the repo's input, like `--marker-ink` and `--arrow-ink`. A row is usually an
+ * <a>, but a url-less row is a <div>, so the transition is declared here and not inherited. */
+.pl-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-2);
+  padding: var(--space-5) var(--space-4);
+  border-top: var(--hairline);
+  border-left: 3px solid transparent;
+  transition: var(--transition-control);
+}
+.pl-row:hover,
+.pl-row:focus-visible {
+  background: var(--surface-card);
+  border-left-color: var(--row-edge, var(--line-2));
+}
+
+/* A panel on the page ground. Both repos wrote this rule byte-for-byte (`--border-default` is
+ * `--line-1`); what differs is only the tone and hover each adds on top. */
+.pl-card {
+  display: block;
+  padding: var(--space-5);
+  background: var(--surface-card);
+  border: var(--border-hairline) solid var(--border-default);
+}
+
+/* A control's skeleton: the ink outline, the label type and the one timing. Every filled, ghosted
+ * or stamped variant is the consumer's — the family only agrees on what makes a control a control. */
+.pl-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-family: var(--font-ui);
+  font-weight: var(--weight-semibold);
+  line-height: 1;
+  border: var(--border-mid) solid var(--ink-1);
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: var(--transition-control);
+}
+
+/* Wordmark skeleton. Every repo lays the mark, an optional rule and a section label on one
+ * baseline at `--wm-size`; what the mark itself *is* — outlined SVG, highlighted word — is the
+ * one part that differs, so it stays in each repo's own component. */
+.pl-wm {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  text-decoration: none;
+  border: none;
+  color: var(--ink-1);
+}
+.pl-wm--dark {
+  color: var(--paper-0);
+}
+.pl-wm__name {
+  font-size: var(--wm-size);
+  line-height: 1;
+  white-space: nowrap;
+}
+.pl-wm__rule {
+  width: var(--border-thick);
+  align-self: stretch;
+  min-height: calc(var(--wm-size) * 0.86);
+  background: var(--line-2);
+}
+.pl-wm--dark .pl-wm__rule {
+  background: var(--ink-3-on-dark);
+}
+.pl-wm__section {
+  white-space: nowrap;
+}
+.pl-wm--dark .pl-wm__section {
+  color: var(--paper-3);
+}
+
+/* The „→" that leads a row. `--arrow-ink` is the repo's input. */
+.pl-arrow {
+  color: var(--arrow-ink, currentColor);
+  font-weight: var(--weight-semibold);
+}
+
+.pl-skip {
+  position: absolute;
+  left: var(--space-3);
+  top: var(--space-3);
+  z-index: 100;
+  padding: var(--space-2) var(--space-4);
+  background: var(--surface-card);
+  color: var(--text-strong);
+  border: var(--border-mid) solid var(--ink-1);
+  font: var(--weight-semibold) var(--text-body-sm) / 1 var(--font-ui);
+  transform: translateY(calc(-100% - var(--space-5)));
+  transition: transform var(--dur-2) var(--ease-out);
+}
+.pl-skip:focus-visible {
+  transform: translateY(0);
+}
+
+@media (pointer: coarse) {
+  a[href],
+  button,
+  label,
+  summary {
+    min-height: 44px;
+  }
+}

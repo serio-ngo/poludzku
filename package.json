@@ -1,0 +1,44 @@
+{
+  "name": "poludzku",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "astro dev --port 4321",
+    "build": "astro build",
+    "preview": "astro preview",
+    "typecheck": "wrangler types && astro check",
+    "test": "node --test src tests",
+    "test:e2e": "playwright test",
+    "a11y": "node scripts/a11y.mjs",
+    "gates": "node scripts/gates.mjs",
+    "docs:links": "node scripts/docs-links.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "knip": "knip",
+    "spell": "cspell --no-progress .",
+    "redirects": "node scripts/redirects.mjs",
+    "check": "npm run typecheck && npm run format:check && npm run knip && npm run spell && npm run docs:links && npm run gates && npm run build && npm run test"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "14.4.9",
+    "@lucide/astro": "1.44.0",
+    "astro": "7.3.2",
+    "universal-github-app-jwt": "2.2.2"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.12",
+    "@cspell/dict-pl_pl": "3.0.8",
+    "@playwright/test": "1.65.1",
+    "cspell": "10.5.2",
+    "knip": "6.48.0",
+    "miniflare": "5.20261123.1-beta",
+    "pa11y-ci": "4.1.1",
+    "prettier": "3.9.6",
+    "typescript": "6.0.3",
+    "wrangler": "4.168.0"
+  }
+}

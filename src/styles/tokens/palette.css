@@ -1,0 +1,14 @@
+/* Copied by hand from the newsroom palette; paper, ink and lines only. */
+:root {
+  --paper-0: #fdfbf7;
+  --paper-1: #faf7f2;
+  --paper-2: #f2ece3;
+  --paper-3: #e8dfd2;
+  --ink-1: #16130f;
+  --ink-2: #4a423a;
+  --ink-3: #6b6258;
+  --ink-3-on-dark: #8a7f72;
+  --line-1: #ddd3c6;
+  --line-2: #c6b9a8;
+  --line-on-dark: #4a423a;
+}

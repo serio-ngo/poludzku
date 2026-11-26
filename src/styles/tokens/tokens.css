@@ -1,0 +1,75 @@
+@import "./palette.css";
+
+/* Fundacja Serio design tokens — the family's shared vocabulary: paper, ink, lines, the three
+ * type families, the spacing ramp, borders, motion and the one gesture (the marker band).
+ * Consumers import this file and supply the two inputs it leaves open:
+ *   --marker-ink   the repo's own accent, at whatever opacity its brand uses
+ *   --arrow-ink    the colour of the „→" that leads a row
+ * Nothing repo-local belongs here: no accent, no state colour, no semantic alias. */
+:root {
+  --font-display: var(--font-newsreader, Georgia, "Times New Roman", serif);
+  --font-ui: var(--font-libre-franklin, "Helvetica Neue", Arial, sans-serif);
+  --font-mono: var(--font-jetbrains-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+
+  --measure-text: 62ch;
+  --measure-narrow: 46ch;
+  --page-max: 1120px;
+  --page-gutter: var(--space-5);
+
+  --border-hairline: 1px;
+  --border-mid: 1.5px;
+  --border-thick: 2px;
+  --hairline: var(--border-hairline) solid var(--line-1);
+  --rule: var(--border-thick) solid var(--ink-1);
+
+  --ease-out: cubic-bezier(0.2, 0.8, 0.3, 1);
+  --dur-2: 140ms;
+  --dur-3: 280ms;
+
+  /* The family's one gesture. `--marker-ink` is the repo's own accent. Unset, the band falls back
+   * to the text colour and is visibly wrong rather than silently absent. */
+  --marker-height: 0.46em;
+  --marker-pad: 0;
+  --marker-band: linear-gradient(
+    to top,
+    var(--marker-ink, currentColor) 0,
+    var(--marker-ink, currentColor) var(--marker-height),
+    transparent var(--marker-height)
+  );
+}
+
+@media (max-width: 480px) {
+  :root {
+    --page-gutter: var(--space-4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-2: 0ms;
+    --dur-3: 0ms;
+  }
+}
+
+/* Marker wipe: the band grows left to right on hover and keyboard focus. Duration is a token, so
+ * the reduced-motion block above turns it off without a second media query. */
+.pl-t {
+  background: var(--marker-band) no-repeat left bottom / 0% 100%;
+  transition: background-size var(--dur-3) var(--ease-out);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+a:hover .pl-t,
+a:focus-visible .pl-t {
+  background-size: 100% 100%;
+}

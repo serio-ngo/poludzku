@@ -1,0 +1,50 @@
+/* Fundacja Serio shared semantics — the second half of base.css.
+ *
+ * tokens.css names raw brand material (paper, ink, lines, families, the ramp). base.css writes the
+ * chrome. Between them sat a layer every consumer re-declared byte-identically: the weight ramp,
+ * the body type scale, and the surface/text aliases those rules actually reference. This file is
+ * that layer. Import order is tokens → semantic → base.
+ *
+ * What deliberately stays out, because the consumers measure differently: the display scale
+ * (--text-lead, --text-title-*), --leading-snug, --tracking-tight, every accent and state colour,
+ * and --focus-ring. Those are each repo's own decision, and tokens.css's 28.5 gate still bars them
+ * from the raw layer. */
+:root {
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-extrabold: 800;
+
+  --leading-body: 1.6;
+  --tracking-label: 0.14em;
+
+  --text-body-lg: 1.1875rem;
+  --text-body: 1.0625rem;
+  --text-body-sm: 0.9375rem;
+  --text-meta: 0.8125rem;
+  --text-label: 0.75rem;
+  --text-label-sm: 0.6875rem;
+
+  --type-label: var(--weight-semibold) var(--text-label) / 1 var(--font-mono);
+  --type-meta: var(--weight-regular) var(--text-meta) / 1 var(--font-mono);
+
+  --surface-page: var(--paper-1);
+  --surface-card: var(--paper-0);
+  --surface-sunken: var(--paper-2);
+  --surface-inverse: var(--ink-1);
+
+  --text-strong: var(--ink-1);
+  --text-muted: var(--ink-2);
+  --text-faint: var(--ink-3);
+  --text-faint-on-dark: var(--ink-3-on-dark);
+  --text-inverse: var(--paper-0);
+
+  --border-default: var(--line-1);
+  --border-quiet: var(--line-2);
+
+  /* The one timing every hoverable surface in the family uses. */
+  --transition-control:
+    background-color var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out),
+    border-color var(--dur-2) var(--ease-out);
+}

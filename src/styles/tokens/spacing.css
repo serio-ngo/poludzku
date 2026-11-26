@@ -1,0 +1,5 @@
+:root {
+  --rail-width: 280px;
+  --topbar-height: 64px;
+  --stack-answer: var(--space-3);
+}

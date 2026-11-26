@@ -1,7 +1,3 @@
-/* Fundacja Serio shared base: the reset and the chrome classes that are the same rule in every
- * repo of the family. Import after tokens.css and semantic.css. Everything whose value differs
- * between repos — `body`, `a`, `::selection`, the list reset — deliberately stays out; see
- * README §Styles. */
 *,
 *::before,
 *::after {
@@ -17,8 +13,6 @@ h4 {
   margin: 0;
   font-family: var(--font-display);
   font-weight: var(--weight-semibold);
-  /* The display scale is the consumer's: poludzku sets -0.02em/1.22, the magazines -0.01em/1.15.
-   * The fallbacks keep a heading typeset rather than untracked if a repo forgets to declare them. */
   letter-spacing: var(--tracking-tight, -0.01em);
   line-height: var(--leading-snug, 1.2);
   text-wrap: balance;
@@ -38,14 +32,12 @@ summary:focus-visible,
   outline-offset: 2px;
 }
 
-/* The page measure: one container, one gutter, everywhere. */
 .pl-page {
   max-width: var(--page-max);
   margin: 0 auto;
   padding-inline: var(--page-gutter);
 }
 
-/* Small mono caps — kickers, column heads, section labels. */
 .pl-label {
   font: var(--type-label);
   letter-spacing: var(--tracking-label);
@@ -53,8 +45,6 @@ summary:focus-visible,
   color: var(--text-faint);
 }
 
-/* The marker band at rest (the wipe lives on .pl-t in tokens.css). `--marker-pad` is the repo's
- * input: an opaque highlighter wants a little air around the word, a translucent one does not. */
 .pl-mark {
   background: var(--marker-band);
   padding-inline: var(--marker-pad);
@@ -62,9 +52,6 @@ summary:focus-visible,
   box-decoration-break: clone;
 }
 
-/* The family's hoverable row: a rule above, a 3px edge that lights on hover and keyboard focus.
- * `--row-edge` is the repo's input, like `--marker-ink` and `--arrow-ink`. A row is usually an
- * <a>, but a url-less row is a <div>, so the transition is declared here and not inherited. */
 .pl-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -80,8 +67,6 @@ summary:focus-visible,
   border-left-color: var(--row-edge, var(--line-2));
 }
 
-/* A panel on the page ground. Both repos wrote this rule byte-for-byte (`--border-default` is
- * `--line-1`); what differs is only the tone and hover each adds on top. */
 .pl-card {
   display: block;
   padding: var(--space-5);
@@ -89,8 +74,6 @@ summary:focus-visible,
   border: var(--border-hairline) solid var(--border-default);
 }
 
-/* A control's skeleton: the ink outline, the label type and the one timing. Every filled, ghosted
- * or stamped variant is the consumer's — the family only agrees on what makes a control a control. */
 .pl-btn {
   display: inline-flex;
   align-items: center;
@@ -106,9 +89,6 @@ summary:focus-visible,
   transition: var(--transition-control);
 }
 
-/* Wordmark skeleton. Every repo lays the mark, an optional rule and a section label on one
- * baseline at `--wm-size`; what the mark itself *is* — outlined SVG, highlighted word — is the
- * one part that differs, so it stays in each repo's own component. */
 .pl-wm {
   display: inline-flex;
   align-items: center;
@@ -141,7 +121,6 @@ summary:focus-visible,
   color: var(--paper-3);
 }
 
-/* The „→" that leads a row. `--arrow-ink` is the repo's input. */
 .pl-arrow {
   color: var(--arrow-ink, currentColor);
   font-weight: var(--weight-semibold);

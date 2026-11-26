@@ -1,48 +1,15 @@
-// The stage engine: normalized GitHub evidence in, stage + health + mover out. Pure: no import, no network.
-// Rules: .prd/stages.md. Evidence shape: emitted by src/lib/github.ts.
-
-/**
- * @typedef {{ name: string, by?: string, at?: string }} Label
- * @typedef {{ name: string, conclusion: string|null, url?: string }} CheckItem
- * @typedef {{ state: string, body: string, commitId: string, at: string, author: string }} Review
- * @typedef {{ number: number, url: string, title: string, state: 'open'|'closed'|'merged', draft: boolean,
- *   author: string, authorIsBot: boolean, assignees: (string|null)[], requestedReviewers: string[], headSha: string,
- *   labels: Label[], closingIssues: number[], closingComplete: boolean, reviews: Review[], reviewsComplete: boolean,
- *   checks: { status: 'complete'|'incomplete'|'unavailable', items: CheckItem[] },
- *   lock: { verified: boolean, headSha: string, at: string, reviewCommit?: string }|null,
- *   testSubmission: { kind: 'marker'|'manual', at: string, verified: boolean }|null,
- *   deliverRun: { running: boolean, headSha: string, reviewAt: string, verified: boolean }|null }} Pr
- * @typedef {{ kind: 'issue'|'pr', number: number, title: string, body: string, url: string,
- *   state: 'open'|'closed'|'merged', stateReason: 'completed'|'not_planned'|'reopened'|null,
- *   labels: Label[], assignees: (string|null)[], author: string, updatedAt: string, topics: string[],
- *   config: { status: 'absent'|'valid'|'invalid'|'unavailable', stages?: { name: string|{pl: string, en: string}, label: string, mover: string }[] },
- *   spec: { hash: string, markers: { verdict: 'ready'|'questions', sha: string, at: string, verified: boolean }[],
- *     specOk: { present: boolean, at?: string, verified: boolean } },
- *   writeTests: { spec: string, at: string, runId?: number, verified: boolean }[],
- *   prs: Pr[], prsComplete: boolean,
- *   runs: { id: number, name: string, status: string, conclusion: string|null, headSha: string, prNumber?: number, taskNumber?: number, actorIsBot: boolean, url: string }[],
- *   viewer: string|null, partial: boolean }} Evidence  A kind 'pr' evidence carries its own PR in `prs`.
- * @typedef {{ kind: 'viewer'|'person'|'someone'|'agent'|'automation'|'nobody'|'unknown', login?: string }} Mover
- * @typedef {{ preset: 'lifecycle'|'generic'|'custom'|'unknown', outcome: 'open'|'done'|'closed',
- *   stage: { index: number, total: number, name?: * }|null, health: 'passing'|'pending'|'failed'|'parked'|'no-checks'|'unknown',
- *   mover: Mover, next: { index: number, name?: * }|null, evidence: { key: string, detail: string }[] }} Result
- * @typedef {Result & { stageNameKey: *, nextNameKey: *, healthGlyph: string, moverGlyph: string, stateGlyph: string }} View
- */
-
 export const PRESETS = { lifecycle: { total: 7 }, generic: { total: 5 } };
 
 const good = (c) => c === 'success' || c === 'neutral' || c === 'skipped';
 const waiting = (c) => c == null || c === 'pending';
 const latest = (list) => list.reduce((a, b) => (!a || b.at > a.at ? b : a), null);
 
-/** @param {string} title @param {string} body @returns {Promise<string>} */
 export async function specHash(title, body) {
   const bytes = new TextEncoder().encode(`${title}\n${body.replace(/\r\n/g, '\n')}`);
   const sum = await globalThis.crypto.subtle.digest('SHA-256', bytes);
   return [...new Uint8Array(sum)].map((b) => b.toString(16).padStart(2, '0')).join('').slice(0, 12);
 }
 
-/** @param {Evidence} ev @returns {Result} */
 export function derive(ev) {
   const evidence = [];
   const note = (key, detail) => evidence.push({ key, detail });
@@ -60,7 +27,6 @@ export function derive(ev) {
     return { preset, outcome, stage: outcome === 'done' && total ? { index: total, total, name } : null, health: 'unknown', mover: { kind: 'nobody' }, next: null, evidence };
   }
 
-  // Active PR: object, null (known none) or undefined (unknown). Merged linked PRs never complete an open issue.
   const prs = ev.prs ?? [];
   const linked = prs.filter((p) => p.closingIssues.includes(ev.number));
   const open = linked.filter((p) => p.state === 'open');
@@ -71,7 +37,6 @@ export function derive(ev) {
       : (open[0] ?? (linked.some((p) => p.state === 'merged') ? undefined : null));
   note('pr', pr ? `#${pr.number}` : pr === null ? 'none' : 'unknown');
 
-  // Only runs tied to the PR and its current head, or (before a PR exists) to the task, count.
   const runs = pr
     ? ev.runs.filter((r) => r.prNumber === pr.number && r.headSha === pr.headSha)
     : pr === null ? ev.runs.filter((r) => r.taskNumber === ev.number) : [];
@@ -88,7 +53,7 @@ export function derive(ev) {
 
   const named = (kind, login) => ({ kind: login && login === ev.viewer ? 'viewer' : kind, ...(login ? { login } : {}) });
   const person = (login) => named('person', login);
-  const assignee = (list) => (list.length ? person(list[0]) : { kind: 'someone' }); // [null] = unreadable assignee
+  const assignee = (list) => (list.length ? person(list[0]) : { kind: 'someone' });
   const doer = pr?.authorIsBot ? { kind: 'agent' } : person(pr?.author);
   const reviewer = () => (pr.requestedReviewers.length ? person(pr.requestedReviewers[0]) : { kind: 'someone' });
   const agent = live.some((r) => r.actorIsBot) ? { kind: 'agent' } : null;
@@ -98,7 +63,7 @@ export function derive(ev) {
   const lifecycle = () => {
     const m = latest(ev.spec.markers);
     if (m && !m.verified) return unknown('spec marker unverified');
-    const cur = m?.sha === ev.spec.hash ? m : null; // an edited spec voids earlier markers
+    const cur = m?.sha === ev.spec.hash ? m : null;
     if (cur?.verdict === 'questions' || (cur?.verdict !== 'ready' && labels.includes('spec-review'))) {
       return stage(2, agent ?? (cur ? person(ev.author) : { kind: 'unknown' }), 'spec review');
     }
@@ -160,7 +125,6 @@ export function derive(ev) {
 const HEALTH = { passing: 'circle-check', pending: 'circle-dashed', failed: 'circle-alert', parked: 'circle-pause', 'no-checks': 'circle', unknown: 'circle-help' };
 const MOVER = { viewer: 'avatar', person: 'avatar', someone: 'user-round', agent: 'bot', automation: 'cog', nobody: 'circle-off', unknown: 'circle-help' };
 
-/** @param {Result} r @returns {View} */
 export function present(r) {
   const key = (s) => (s ? (r.preset === 'custom' ? { custom: s.name } : `${r.preset}.${s.index}`) : null);
   const healthGlyph = HEALTH[r.health];

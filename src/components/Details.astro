@@ -3,12 +3,6 @@ import { t } from "../locales/index.ts";
 import Glyph from "./Glyph.astro";
 import { stageName, type Lang, type View } from "./view.ts";
 
-/**
- * Folded evidence. `task` is the adapter's task data, minimal shape:
- * checks `{name, conclusion, url?}` (conclusion as in Evidence: success|failure|pending|neutral|skipped|cancelled|timed_out|action_required|null),
- * reviews `{state, author}`, labels `{name}`, prs `{number, url, title}` (linked tasks), commits `{sha, url?}`,
- * deployments `{name, url?}` (optional). Empty groups are not rendered.
- */
 export interface TaskDetails {
     checks: { name: string; conclusion: string | null; url?: string }[];
     reviews: { state: string; author: string }[];

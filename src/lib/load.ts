@@ -18,7 +18,6 @@ const STATUS = { noAccess: 404, notFound: 404, unavailable: 503, expired: 401, n
 const REASON = { "no-access": "noAccess", unavailable: "unavailable", expired: "expired", "not-found": "notFound" } as const;
 const gh = (u: unknown) => (typeof u === "string" && /^https:\/\/github\.com\//.test(u) ? u : undefined);
 
-/** Reads one gh route. Returns a Response (redirect) or the page to render; sets status and the public-snapshot mark. */
 export async function loadGh(Astro: AstroGlobal, lang: Lang): Promise<Response | Page> {
     const { owner = "", repo = "", rest = "" } = Astro.params;
     const route = parseRoute(owner, repo, rest);
@@ -49,7 +48,6 @@ export async function loadGh(Astro: AstroGlobal, lang: Lang): Promise<Response |
         if (kind === "noAccess") return fail(kind, viewer ? { href: g.installUrl(), glyph: "external-link" } : signIn);
         return fail(kind, kind === "unavailable" ? { href: path, glyph: "refresh-cw" } : kind === "expired" ? signIn : undefined);
     };
-    // Only an anonymous read that passed the adapter's public-and-installed check may be shared.
     const ok = () => viewer || Astro.response.headers.set("x-pl-snapshot", "public");
 
     if (route.kind === "branch") {

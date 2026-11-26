@@ -3,7 +3,6 @@ const REPO = /^[A-Za-z0-9._-]{1,100}$/;
 const SAFE = /^[A-Za-z0-9._-]{1,100}$/;
 const DOTS = /^\.+$/;
 
-/** `owner/repo` or a github.com address → the app path, or null when invalid. */
 export function entryPath(input: string): string | null {
     const s = input.trim().replace(/^https?:\/\/(www\.)?github\.com\//i, "").replace(/[?#].*$/, "").replace(/\/+$/, "");
     const [owner, rawRepo, kind, ...rest] = s.split("/");

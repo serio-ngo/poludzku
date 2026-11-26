@@ -3,7 +3,6 @@ import { t } from "../locales/index.ts";
 import Glyph from "./Glyph.astro";
 import type { Lang } from "./view.ts";
 
-/** One glyph, at most three words, at most one action (a glyph link; `label` overrides the glyph's word, e.g. for "home"). */
 interface Props {
     kind: "noAccess" | "unavailable" | "expired" | "noTask" | "notFound" | "empty" | "partial";
     lang: Lang;

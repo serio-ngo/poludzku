@@ -14,7 +14,6 @@ type Store = {
     deleteAlarm(): Promise<void>;
 };
 
-// Durable Object logic, kept free of cloudflare:workers so node tests can import it.
 export async function deleteRec(s: Store) {
     await s.deleteAll();
     await s.deleteAlarm();
@@ -91,7 +90,6 @@ export function checkState(request: Request, param: string | null) {
     return a !== "" && diff === 0;
 }
 
-// Same-origin path only. Control characters are refused: browsers strip tabs and newlines, so "/\t/evil.com" would become "//evil.com".
 export const safeNext = (next: string | null | undefined) =>
     next &&
     next.length <= 200 &&

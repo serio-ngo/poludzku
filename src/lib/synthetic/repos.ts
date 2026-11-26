@@ -1,4 +1,3 @@
-// Invented GitHub world for local development and tests. Every name, number and hash is made up.
 export type Def = Record<string, any>;
 export type Repo = {
     full: string;
@@ -48,7 +47,6 @@ const pr = (n: number, title: string, o: Def = {}): Def => ({
 });
 const bot = (body: string, at: number): Def => ({ body, login: "github-actions", bot: true, at });
 
-// `{hash}` becomes the issue's spec hash when the node is served.
 const ready = bot("<!-- spec-review v1 sha={hash} verdict=ready ac=1 -->", 1);
 const wrote = bot("<!-- write-tests v1 spec={hash} -->", 3);
 const approved = { labels: ["spec-ok"], comments: [ready, wrote] };
@@ -65,7 +63,7 @@ const reviewed = (n: number, closes: number, o: Def = {}) =>
         comments: [
             bot(`<!-- write-tests v1 run=${n + 100} -->`, 3),
             bot(
-                `<!-- acceptance v1 sha=${sha(n)} -->\nhttps://github.com/przyklad/strona/actions/runs/${n + 200}\nTest lock: locked at ${sha(n).slice(0, 7)}`,
+                `<!-- acceptance v1 sha=${sha(n)} -->\nhttps://github.com/example/website/actions/runs/${n + 200}\nTest lock: locked at ${sha(n).slice(0, 7)}`,
                 5,
             ),
         ],
@@ -83,7 +81,7 @@ export function makeWorld(): Record<string, Repo> {
         runs: Def[] = [],
     ) => {
         const i = repos.length;
-        const full = `przyklad/${name}`;
+        const full = `example/${name}`;
         const run = (
             id: number,
             rname: string,
@@ -117,7 +115,6 @@ export function makeWorld(): Record<string, Repo> {
             ...o,
         });
     };
-    // Writer runs (n+100) and lock runs (n+200) belong to the staged pull requests of `strona`.
     const staged = [16, 17, 18, 19, 20].flatMap((n) => [
         [
             n + 100,
@@ -140,7 +137,7 @@ export function makeWorld(): Record<string, Repo> {
     ]);
 
     add(
-        "strona",
+        "website",
         { topics: ["lifecycle"] },
         [
             issue(1, "Dodaj mapę strony"),
@@ -177,20 +174,20 @@ export function makeWorld(): Record<string, Repo> {
             pr(30, "Poprawka literówek", { draft: false, reviewers: ["ben"] }),
             pr(31, "Poprawka wspólna", { draft: false, closes: [14, 15] }),
             pr(32, "Poprawka kontrastu", {
-                head: "poprawka-kontrastu",
+                head: "fix-contrast",
                 draft: false,
                 closes: [34],
             }),
         ],
         [
-            [20, "spec-review", "in_progress", null, { head_branch: "agent/2-wyszukiwarka" }],
-            [40, "write-tests", "in_progress", null, { head_branch: "agent/4-stopka" }],
+            [20, "spec-review", "in_progress", null, { head_branch: "agent/2-search" }],
+            [40, "write-tests", "in_progress", null, { head_branch: "agent/4-footer" }],
             ...staged,
         ] as any,
     );
 
     add(
-        "sklep",
+        "store",
         {},
         [
             issue(1, "Dodaj koszyk"),
@@ -228,7 +225,7 @@ export function makeWorld(): Record<string, Repo> {
     );
 
     add(
-        "wlasne",
+        "custom",
         {
             config: "stages:\n  - name: Pomysł\n    name_en: Idea\n    label: idea\n    mover: person\n  - name: Prace\n    name_en: Work\n    label: prace\n    mover: agent\n  - name: Odbiór\n    label: odbior\n    mover: person\n",
         },
@@ -239,20 +236,19 @@ export function makeWorld(): Record<string, Repo> {
             issue(4, "Bez etykiety"),
         ],
     );
-    add("tajne", { private: true, access: ["ola"] }, [
+    add("private", { private: true, access: ["ola"] }, [
         issue(1, "Tajne zadanie"),
         issue(2, "Drugie tajne zadanie"),
     ]);
-    add("pusto", {});
-    // Fifteen pages of two: the default request budget (12) stops after page 12, so the person-owned task on page 15 is unread.
+    add("empty", {});
     add(
-        "duzo",
+        "many",
         { pageSize: 2 },
         Array.from({ length: 30 }, (_, i) =>
             issue(i + 1, `Zadanie ${i + 1}`, i + 1 === 29 ? { assignees: ["ola"] } : {}),
         ),
     );
-    add("awaria", { fail: true });
-    add("bez-aplikacji", { installationId: null }, [issue(1, "Zadanie")]);
+    add("outage", { fail: true });
+    add("no-app", { installationId: null }, [issue(1, "Zadanie")]);
     return Object.fromEntries(repos.map((r) => [r.full, r]));
 }

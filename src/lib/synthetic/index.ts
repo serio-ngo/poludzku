@@ -1,10 +1,8 @@
-// Fake GitHub: answers exactly the requests src/lib/github.ts sends, from the invented world in repos.ts.
 import { specHash } from "../stages.mjs";
 import { BODY, makeWorld, type Def, type Repo } from "./repos.ts";
 
 let world = makeWorld();
 
-// Test mutators: module-level only, never reachable over HTTP.
 export const __reset = () => {
     world = makeWorld();
 };
@@ -217,7 +215,7 @@ export async function syntheticFetch(
             id: r.id,
             name: r.full.split("/")[1],
             full_name: r.full,
-            owner: { login: "przyklad" },
+            owner: { login: "example" },
             private: r.private,
             html_url: `https://github.com/${r.full}`,
             default_branch: "main",

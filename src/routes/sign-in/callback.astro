@@ -18,7 +18,7 @@ const lang = langOf(next);
 const code = url.searchParams.get("code");
 const cookies = clearOauthCookies(origin);
 
-let reason: "expired" | "unavailable" | null = "expired"; // bad state, or the viewer declined
+let reason: "expired" | "unavailable" | null = "expired";
 if (code && checkState(request, url.searchParams.get("state"))) {
     const gh = createGithub({ env });
     const tok = await gh.exchangeCode(code, callbackUrl(origin));

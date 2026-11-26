@@ -9,7 +9,6 @@ import NotFound from "./NotFound.astro";
 import Project from "./Project.astro";
 import Task from "./Task.astro";
 
-/** Body of every gh route: the page `loadGh` chose, in the shell all tool screens share. */
 interface Props {
     lang: Lang;
     page: Exclude<Page, { page: "invalid" }> | { page: "invalid" };

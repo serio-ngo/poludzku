@@ -22,7 +22,7 @@ const Intro = en ? HomeEn : HomePl;
         <h1>{d.tagline.before}<mark class="pl-mark">{d.tagline.marked}</mark>{d.tagline.after}</h1>
         <div class="entry">
             <Intro />
-            <form method="get" action={en ? "/en/otworz" : "/otworz"}>
+            <form method="get" action={en ? "/en/open" : "/open"}>
                 <label class="sr-only" for="r">{d.entry.label}</label>
                 <input id="r" name="r" value="serio-ngo/poludzku" placeholder={d.entry.placeholder} required autocapitalize="off" autocomplete="off" spellcheck="false" />
                 <button type="submit">{d.entry.button}</button>

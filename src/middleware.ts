@@ -3,7 +3,7 @@ import { env } from "cloudflare:workers";
 import { clearSessionCookie, getSession, readSessionId } from "./lib/session.ts";
 import { SITE } from "./config/site.ts";
 
-const DYNAMIC = /^(\/en)?\/(gh(\/|$)|zaloguj|wyloguj$|avatar(\/|$)|otworz$)/;
+const DYNAMIC = /^(\/en)?\/(gh(\/|$)|zaloguj|wyloguj$|avatar(\/|$)|(?:open|otworz)$)/;
 
 export const onRequest = defineMiddleware(async ({ request, url, locals }, next) => {
     const id = readSessionId(request);
@@ -11,7 +11,6 @@ export const onRequest = defineMiddleware(async ({ request, url, locals }, next)
     locals.viewer = rec ? { token: rec.token, login: rec.login } : null;
     locals.sessionState = rec ? "valid" : id ? "expired" : "none";
 
-    // Copy: redirect and fetched responses have immutable headers.
     const upstream = await next();
     const res = new Response(upstream.body, upstream);
     const h = res.headers;
@@ -23,7 +22,6 @@ export const onRequest = defineMiddleware(async ({ request, url, locals }, next)
         h.set("X-Robots-Tag", "noindex");
         h.set(
             "Cache-Control",
-            // HTML is never cached by the browser: every view re-checks access. Only public avatar bytes may be.
             snapshot && url.pathname.startsWith("/avatar/")
                 ? `public, max-age=${SITE.cacheSeconds}`
                 : "private, no-store",

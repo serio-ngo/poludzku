@@ -1,4 +1,3 @@
-// The only file that talks to GitHub: identity, access, pagination and normalization into stage-engine Evidence.
 import githubAppJwt from "universal-github-app-jwt";
 import { SITE } from "../config/site.ts";
 import { derive, present, specHash } from "./stages.mjs";
@@ -24,7 +23,7 @@ class Fail extends Error {
 }
 
 const API = "https://api.github.com";
-const tokens = new Map<number, { token: string; until: number }>(); // installation tokens, per isolate
+const tokens = new Map<number, { token: string; until: number }>();
 const now = () => new Date().toISOString();
 const same = (a: string, b: string) => a.toLowerCase() === b.toLowerCase();
 const ghUrl = (u: unknown) =>
@@ -35,7 +34,6 @@ const fail = (r: Reason, status = 0): never => {
 };
 const login = (a: any) => a?.login ?? "ghost";
 
-// GraphQL fields. The list asks for less per task than the task page.
 const BIG = { rev: 50, com: 100, ctx: 50, tl: 100, prs: 10 };
 const SMALL = { rev: 5, com: 30, ctx: 30, tl: 30, prs: 3 };
 type Size = typeof BIG;
@@ -60,7 +58,6 @@ const ISSUES = `query Issues(${ARGS},$after:String){${REPO}{issues(first:${SITE.
 const PRS = `query Prs(${ARGS},$after:String){${REPO}{pullRequests(first:${SITE.listPageSize},states:OPEN,after:$after,orderBy:{field:UPDATED_AT,direction:DESC}){pageInfo{hasNextPage endCursor} nodes{${PR_FIELDS(SMALL)}}}}}`;
 const BRANCH = `query Branch(${ARGS},$branch:String!){${REPO}{pullRequests(headRefName:$branch,states:OPEN,first:2){nodes{number repository{nameWithOwner} closingIssuesReferences(first:5){pageInfo{hasNextPage} nodes{number repository{nameWithOwner}}}}}}}`;
 
-// Tiny parser for exactly `.github/poludzku.yml`: a `stages:` list of `name`, optional `name_en`, `label`, `mover`.
 const MOVERS = ["person", "agent", "automation", "nobody"];
 function parseConfig(text: string) {
     const invalid = { status: "invalid" };
@@ -120,7 +117,7 @@ const checkOf = (n: any) =>
 
 const labelsOf = (n: any) => {
     const events = new Map<string, any>();
-    for (const e of n.timelineItems.nodes) if (e.label) events.set(e.label.name, e); // ascending: the latest wins
+    for (const e of n.timelineItems.nodes) if (e.label) events.set(e.label.name, e);
     return n.labels.nodes.map(({ name }: any) => {
         const e = events.get(name);
         return e ? { name, by: e.actor?.login, at: e.createdAt } : { name };
@@ -132,7 +129,6 @@ const closing = (p: any, full: string): number[] =>
     p.closingIssuesReferences.nodes
         .filter((i: any) => same(i.repository.nameWithOwner, full))
         .map((i: any) => i.number);
-// A pull request with exactly one readable same-repository closing issue resolves to that issue.
 const canonicalOf = (p: any, full: string) => {
     const c = closing(p, full);
     return c.length === 1 && !p.closingIssuesReferences.pageInfo.hasNextPage ? c[0] : undefined;
@@ -163,7 +159,6 @@ function prOf(n: any, c: Ctx, hash: string, writeTests: any[]) {
     const run = (id: number) => c.runs.find((r) => r.id === id && r.prs.includes(n.number));
     const rollup = n.statusCheckRollup?.contexts;
 
-    // Lifecycle gate: a bot report whose marker names the current head, a resolvable successful run, and a `locked at` commit.
     const acc = bots.findLast((x: any) => /<!-- acceptance v1 sha=[0-9a-f]{40} -->/.test(x.body));
     const ref = acc && /locked at ([0-9a-f]{7,40})\b/.exec(acc.body)?.[1];
     const lockRun = acc && run(Number(/actions\/runs\/(\d+)/.exec(acc.body)?.[1]));
@@ -184,7 +179,6 @@ function prOf(n: any, c: Ctx, hash: string, writeTests: any[]) {
           }
         : null;
 
-    // Test submission: the issue marker for the current spec plus a bot step note naming a run tied to this draft; or a manual table.
     const marker = writeTests.findLast((w) => w.spec === hash);
     const note = hit(/<!-- write-tests v1 run=(\d+) -->/);
     const testSubmission = marker
@@ -197,7 +191,6 @@ function prOf(n: any, c: Ctx, hash: string, writeTests: any[]) {
           ? { kind: "manual", at: n.createdAt, verified: true }
           : null;
 
-    // shortcut: the `deliver` job is matched by workflow name, not by job; upgrade when the Jobs API is added to the reads.
     const d = c.runs.find(
         (r) =>
             r.name === "deliver" &&
@@ -325,19 +318,15 @@ export function createGithub(o: {
     viewerToken?: string;
     viewerLogin?: string;
     cache?: Cache;
-    /** True only when the request itself came to a loopback host. */
     loopback?: boolean;
 }) {
     const { env, viewerLogin, cache } = o;
     const local = env.SITE_ORIGIN !== SITE.url;
-    // Local only: the developer's own `gh` token, read on the server, never in production.
     const devToken = local && o.loopback && env.GITHUB_UPSTREAM === "gh" ? env.GITHUB_DEV_TOKEN : undefined;
     const viewerToken = o.viewerToken ?? devToken;
-    // Never synthetic in production, whatever else is set.
     const synthetic =
         local && (env.GITHUB_UPSTREAM === "synthetic" || (!env.GITHUB_APP_ID && !devToken));
     const f = o.fetch ?? (synthetic ? (syntheticFetch as typeof fetch) : globalThis.fetch);
-    // Pages of one list read, first pages excluded; a test or e2e run lowers it to force a partial list.
     const budget = {
         requests: Number(env.REQUEST_BUDGET ?? SITE.requestBudget.requests),
         milliseconds: SITE.requestBudget.milliseconds,
@@ -382,7 +371,7 @@ export function createGithub(o: {
             body: JSON.stringify({ operationName, query, variables }),
         });
         const errors: any[] = body.errors ?? [];
-        if (errors.some((e) => e.type !== "NOT_FOUND")) return fail("unavailable"); // includes RATE_LIMITED
+        if (errors.some((e) => e.type !== "NOT_FOUND")) return fail("unavailable");
         return body.data?.repository ?? fail("no-access");
     }
 
@@ -408,7 +397,6 @@ export function createGithub(o: {
         return r.token as string;
     }
 
-    // Identity and access first, before any cache lookup. Missing, unauthorized and not-installed repositories all end as no-access.
     async function access(owner: string, name: string): Promise<Access> {
         if (!/^[A-Za-z0-9-]{1,39}$/.test(owner) || !/^(?!\.+$)[A-Za-z0-9._-]{1,100}$/.test(name))
             return fail("no-access");
@@ -417,7 +405,6 @@ export function createGithub(o: {
         if (viewerToken) {
             token = viewerToken;
             raw = await req(base, token);
-            // Without an App (local `gh` mode) GitHub's own access check on the viewer token is the only gate.
             inst = env.GITHUB_APP_ID || synthetic ? await req(`${base}/installation`, await jwt()) : { id: 0 };
         } else {
             inst = await req(`${base}/installation`, await jwt());
@@ -447,7 +434,6 @@ export function createGithub(o: {
             return { ok: false, reason: e instanceof Fail ? e.reason : "unavailable" };
         }
     };
-    // Only anonymous reads, whose access check just proved the repository public and installed, touch the cache. Failures throw before `put`.
     const cached = async <T>(
         a: Access,
         resource: string,
@@ -487,7 +473,6 @@ export function createGithub(o: {
             return { status: e instanceof Fail && e.status === 404 ? "absent" : "unavailable" };
         }
     }
-    // shortcut: only the 50 latest runs are read; older runs leave a lock or submission unverified.
     async function runs(a: Access, sha?: string) {
         try {
             const r = await req(

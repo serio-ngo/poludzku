@@ -1,5 +1,3 @@
-// Local start: create .dev.vars from the example, and in "gh" mode put the developer's own `gh` token in it.
-// .dev.vars is git-ignored; the token stays on this machine and is read only by the local server.
 import { execFileSync } from "node:child_process";
 import { copyFileSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 

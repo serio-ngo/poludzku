@@ -26,7 +26,6 @@ import CircleQuestionMark from "@lucide/astro/icons/circle-question-mark";
 import { t } from "../locales/index.ts";
 import type { Lang } from "./view.ts";
 
-/** Lucide glyph with its words: hidden text and native title. `label=""` marks it decorative (its word is shown beside it). */
 interface Props {
     name: keyof typeof GLYPHS;
     lang: Lang;
@@ -42,7 +41,7 @@ const GLYPHS = {
     "circle-alert": [CircleAlert, "var(--state-change)"],
     "circle-pause": [CirclePause, "var(--state-change)"],
     circle: [Circle, meta],
-    "circle-help": [CircleQuestionMark, meta], // renamed upstream; same meaning
+    "circle-help": [CircleQuestionMark, meta],
     "user-round": [UserRound, body],
     bot: [Bot, body],
     cog: [Cog, body],
@@ -79,7 +78,6 @@ const word = label ?? t(lang).glyph[name].word;
 </style>
 
 <style is:global>
-    /* A glyph that is a link or button: 44x44 target, no underline. */
     .gl {
         display: inline-flex;
         align-items: center;

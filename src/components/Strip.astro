@@ -3,7 +3,6 @@ import { t } from "../locales/index.ts";
 import Glyph from "./Glyph.astro";
 import { stageName, tone, type Lang, type View } from "./view.ts";
 
-/** Stage dots. `lg` adds the current number and name under the strip; `sm` (rows) is dots only. */
 interface Props {
     view: View;
     lang: Lang;
@@ -12,7 +11,6 @@ interface Props {
 const { view, lang, size = "lg" } = Astro.props;
 const d = t(lang);
 const open = view.outcome === "open";
-// shortcut: an unknown stage has no total, so assume the preset's (custom: 7); fine until configs show their stage count.
 const total = view.stage?.total ?? (view.preset === "generic" ? 5 : 7);
 const cur = open ? (view.stage?.index ?? -1) : view.outcome === "done" ? total + 1 : -1;
 const unknown = open && !view.stage;
@@ -68,7 +66,6 @@ const label = unknown ? d.glyph["circle-help"].word : open ? d.stripLabel(cur, t
         justify-content: center;
         height: var(--slot);
     }
-    /* connector to the next dot: ink once the segment is completed */
     li::after {
         content: "";
         position: absolute;

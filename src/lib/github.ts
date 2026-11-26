@@ -326,7 +326,7 @@ export function createGithub(o: {
     const synthetic = isSynthetic(env);
     const f = o.fetch ?? (synthetic ? (syntheticFetch as typeof fetch) : globalThis.fetch);
     const budget = {
-        requests: Number(env.REQUEST_BUDGET ?? SITE.requestBudget.requests),
+        requests: SITE.requestBudget.requests,
         milliseconds: SITE.requestBudget.milliseconds,
     };
 
@@ -378,7 +378,7 @@ export function createGithub(o: {
             ? "synthetic-jwt"
             : (
                   await githubAppJwt({
-                      id: String(env.GITHUB_APP_ID),
+                      id: SITE.app.id,
                       privateKey: env.GITHUB_APP_PRIVATE_KEY,
                   })
               ).token;
@@ -403,7 +403,10 @@ export function createGithub(o: {
         if (viewerToken) {
             token = viewerToken;
             raw = await req(base, token);
-            inst = env.GITHUB_APP_ID || synthetic ? await req(`${base}/installation`, await jwt()) : { id: 0 };
+            inst =
+                SITE.app.id || synthetic
+                    ? await req(`${base}/installation`, await jwt())
+                    : { id: 0 };
         } else {
             inst = await req(`${base}/installation`, await jwt());
             token = await installToken(inst.id);
@@ -617,7 +620,7 @@ export function createGithub(o: {
                     method: "POST",
                     headers: { accept: "application/json", "content-type": "application/json" },
                     body: JSON.stringify({
-                        client_id: env.GITHUB_CLIENT_ID,
+                        client_id: SITE.app.clientId,
                         client_secret: env.GITHUB_CLIENT_SECRET,
                         code,
                         redirect_uri: redirectUri,
@@ -637,7 +640,7 @@ export function createGithub(o: {
                 data: { login: (await req(`${API}/user`, token, {}, true)).login as string },
             })),
 
-        installUrl: () => `https://github.com/apps/${env.GITHUB_APP_SLUG}/installations/new`,
+        installUrl: () => `https://github.com/apps/${SITE.app.slug}/installations/new`,
 
         avatar: (name: string) =>
             out(async () => {

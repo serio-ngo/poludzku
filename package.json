@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "node scripts/dev-vars.mjs && astro dev --port 4321",
     "build": "node scripts/build.mjs",
+    "create-app": "node scripts/create-app.mjs",
     "preview": "node scripts/dev-vars.mjs && astro preview --port 4321",
     "typecheck": "wrangler types && astro check",
     "test": "node --test --experimental-strip-types \"src/app.test.mjs\"",

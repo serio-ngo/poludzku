@@ -12,7 +12,7 @@ import { t } from "../../locales/index.ts";
 
 export const prerender = false;
 const { request, url } = Astro;
-const origin = originOf(url, env);
+const origin = originOf(url);
 const next = readNext(request);
 const lang = langOf(next);
 const code = url.searchParams.get("code");

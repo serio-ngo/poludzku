@@ -1,7 +1,7 @@
 ---
 import Glyph from "./Glyph.astro";
 import Mover from "./Mover.astro";
-import Strip from "./Strip.astro";
+import { t } from "../locales/index.ts";
 import type { Lang, View } from "./view.ts";
 
 interface Props {
@@ -12,62 +12,100 @@ interface Props {
     title: string;
 }
 const { view, lang, href, number, title } = Astro.props;
+const mine = view.mover.kind === "viewer";
 ---
 
-<a class:list={["row", { mine: view.mover.kind === "viewer" }]} href={href}>
-    <span class="n">#{number}</span>
-    <Glyph name={view.stateGlyph as "circle"} lang={lang} />
-    <span class="s"><Strip view={view} lang={lang} size="sm" /></span>
+<a class:list={["card", { mine }]} href={href}>
     <span class="t">{title}</span>
-    <span class="m"><Mover view={view} lang={lang} nobody={view.outcome !== "open"} /></span>
+    <span class="meta">
+        <span class="n">#{number}</span>
+        <span class="r">
+            {view.health === "failed" && <Glyph name="circle-alert" lang={lang} size={20} />}
+            {mine ? <span class="chip">{t(lang).mover.viewer}</span> : <Mover view={view} lang={lang} nobody={view.outcome !== "open"} />}
+        </span>
+    </span>
 </a>
 
 <style>
-    .row {
-        display: grid;
-        grid-template-columns: 3.25rem 1.5rem 96px minmax(0, 1fr) minmax(9rem, auto);
-        align-items: center;
-        column-gap: 20px;
-        padding: 18px 12px;
-        border: 0;
-        border-bottom: 1px solid var(--border-default);
+    .card {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        padding: 14px;
+        border: 1px solid var(--border-default);
+        border-radius: var(--radius-2);
+        background: var(--surface-card);
         color: var(--text-strong);
     }
-    .row:hover,
-    .row:focus-visible {
-        background: var(--surface-card);
+    .card:hover,
+    .card:focus-visible {
+        border-color: var(--ink-1);
     }
     .mine {
-        background: var(--surface-card);
+        background: var(--marker);
+        border: var(--border-mid) solid var(--ink-1);
+        box-shadow: var(--shadow-stamp);
     }
-    .m {
-        display: flex;
-    }
-    .n {
-        font: var(--weight-medium) 0.9375rem / 1.4 var(--font-mono);
-        color: var(--text-muted);
+    .mine:hover {
+        transform: translate(-1px, -1px);
     }
     .t {
-        font: var(--weight-medium) 1.0625rem / 1.4 var(--font-ui);
+        font: var(--weight-medium) 0.9375rem / 1.35 var(--font-ui);
         overflow-wrap: anywhere;
     }
+    .meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+    }
+    .n {
+        font: 0.75rem / 1 var(--font-mono);
+        color: var(--text-muted);
+    }
+    .r {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .chip {
+        display: inline-flex;
+        align-items: center;
+        height: 24px;
+        padding-inline: 10px;
+        border-radius: 12px;
+        background: var(--ink-1);
+        color: var(--marker);
+        font: 600 0.75rem / 1 var(--font-ui);
+    }
     @media (max-width: 639px) {
-        .row {
-            grid-template-columns: 3.25rem 1.5rem minmax(0, 1fr);
-            row-gap: 10px;
+        .card {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 0;
+            border: 0;
+            border-bottom: 1px solid var(--border-default);
+            border-radius: 0;
+            background: none;
+            box-shadow: none;
         }
-        .m {
-            grid-column: 3;
-            grid-row: 1;
-            justify-self: end;
+        .mine {
+            border: 0;
+            border-bottom: 1px solid var(--border-default);
+            background: var(--marker);
+            padding-inline: 8px;
+        }
+        .mine:hover {
+            transform: none;
         }
         .t {
-            grid-column: 1 / -1;
-            grid-row: 2;
+            flex: 1;
         }
-        .s {
-            grid-column: 1 / -1;
-            grid-row: 3;
+        .meta {
+            flex: none;
+            gap: 12px;
         }
     }
 </style>

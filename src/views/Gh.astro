@@ -23,7 +23,7 @@ const title = p.page === "task" ? p.ev.title : `${owner}/${repo}`;
         <NotFound lang={lang} />
     ) : (
         <Base title={title} lang={lang} noindex>
-            <TopBar slot="top" lang={lang} path={Astro.url.pathname} signedIn={!!Astro.locals.viewer} />
+            <TopBar slot="top" lang={lang} path={Astro.url.pathname + Astro.url.search} signedIn={!!Astro.locals.viewer} login={Astro.locals.viewer?.login} />
             <div class:list={["pl-page", { task: p.page === "task" }]}>
                 {p.page === "unavailable" && <Unavailable kind={p.kind} lang={lang} action={p.action} />}
                 {p.page === "list" && <Project lang={lang} owner={owner} repo={repo} {...p} />}

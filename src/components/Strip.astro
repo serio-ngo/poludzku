@@ -1,57 +1,47 @@
 ---
+import Check from "@lucide/astro/icons/check";
 import { t } from "../locales/index.ts";
 import Glyph from "./Glyph.astro";
-import { stageName, tone, type Lang, type View } from "./view.ts";
+import { stageName, type Lang, type View } from "./view.ts";
 
 interface Props {
     view: View;
     lang: Lang;
-    size?: "lg" | "sm";
 }
-const { view, lang, size = "lg" } = Astro.props;
+const { view, lang } = Astro.props;
 const d = t(lang);
 const open = view.outcome === "open";
-const total = view.stage?.total ?? (view.preset === "generic" ? 5 : 7);
+const total = view.stage?.total ?? (view.preset === "generic" ? 5 : view.preset === "lifecycle" ? 7 : 0);
 const cur = open ? (view.stage?.index ?? -1) : view.outcome === "done" ? total + 1 : -1;
 const unknown = open && !view.stage;
 const name = stageName(lang, view.stageNameKey);
 const word = open ? name : d.outcome[view.outcome as "done"];
 const label = unknown ? d.glyph["circle-help"].word : open ? d.stripLabel(cur, total, name) : word;
+const names = view.preset === "lifecycle" || view.preset === "generic" ? (d.stages[view.preset] as Record<number, string>) : null;
+const hideWord = open && !unknown && !!names;
 ---
 
-<div class={`strip ${size}`} style={`${tone(view.stateGlyph)};--n:${total}`}>
-    {!(unknown && size === "lg") && <span class="sr-only">{label}</span>}
-    <ol aria-hidden="true">
-        {
-            Array.from({ length: total }, (_, k) => {
-                const i = k + 1;
-                const s = i < cur ? "done" : i === cur ? "cur" : i === cur + 1 ? "next" : "later";
-                return (
-                    <li class={s}>
-                        <span>{s === "cur" && size === "lg" ? i : ""}</span>
-                    </li>
-                );
-            })
-        }
-    </ol>
-    {size === "lg" && <p>{unknown ? <Glyph name="circle-help" lang={lang} size={28} /> : word}</p>}
+<div class="strip" style={`--n:${total}`}>
+    {
+        total > 0 && (
+            <ol aria-label={label}>
+                {Array.from({ length: total }, (_, k) => {
+                    const i = k + 1;
+                    const s = i < cur ? "done" : i === cur ? "cur" : "later";
+                    return (
+                        <li class={s} aria-current={s === "cur" ? "step" : undefined}>
+                            <span class="dot">{s === "done" ? <Check size={20} aria-hidden="true" /> : i}</span>
+                            {names && <span class="name">{names[i]}</span>}
+                        </li>
+                    );
+                })}
+            </ol>
+        )
+    }
+    <p class:list={{ hide: hideWord }}>{unknown ? <Glyph name="circle-help" lang={lang} size={28} /> : word}</p>
 </div>
 
 <style>
-    .strip {
-        --slot: 34px;
-        --dot: 14px;
-        --cur: 34px;
-        --bw: 2px;
-    }
-    .sm {
-        --slot: 14px;
-        --dot: 8px;
-        --cur: 14px;
-        --bw: 1.5px;
-        width: 96px;
-        max-width: 100%;
-    }
     ol {
         display: grid;
         grid-template-columns: repeat(var(--n), minmax(0, 1fr));
@@ -62,58 +52,73 @@ const label = unknown ? d.glyph["circle-help"].word : open ? d.stripLabel(cur, t
     li {
         position: relative;
         display: flex;
+        flex-direction: column;
         align-items: center;
-        justify-content: center;
-        height: var(--slot);
     }
-    li::after {
+    li + li::before {
         content: "";
         position: absolute;
-        left: 50%;
+        top: 19px;
+        left: -50%;
         width: 100%;
-        top: calc(50% - 1px);
         height: 2px;
         background: var(--line-1);
     }
-    li.done::after {
+    li + li.done::before,
+    li + li.cur::before {
         background: var(--ink-1);
     }
-    li:last-child::after {
-        display: none;
-    }
-    li > span {
+    .dot {
         position: relative;
         z-index: 1;
         display: grid;
         place-items: center;
-        width: var(--dot);
-        height: var(--dot);
+        width: 40px;
+        height: 40px;
+        box-sizing: border-box;
         border-radius: 50%;
-        background: var(--surface-card);
-        border: var(--border-mid) solid var(--line-2);
-        font: var(--weight-semibold) 0.875rem / 1 var(--font-mono);
+        background: var(--surface-page);
+        border: 2px solid var(--line-1);
+        font: var(--weight-semibold) 0.9375rem / 1 var(--font-mono);
+        color: var(--text-muted);
+    }
+    .done .dot {
+        background: var(--ink-1);
+        border-color: var(--ink-1);
+        color: var(--paper-0);
+    }
+    .cur .dot {
+        background: var(--marker);
+        border: var(--border-thick) solid var(--ink-1);
+        box-shadow: var(--shadow-stamp);
+        font-weight: var(--weight-semibold);
         color: var(--ink-1);
     }
-    .done span {
-        background: var(--ink-1);
-        border: var(--bw) solid var(--ink-1);
+    .name {
+        max-width: 120px;
+        margin-top: 12px;
+        font: var(--weight-medium) 0.8125rem / 1.3 var(--font-ui);
+        text-align: center;
+        color: var(--text-muted);
+        overflow-wrap: anywhere;
     }
-    .next span {
-        border: var(--bw) dashed var(--ink-1);
-    }
-    .cur span {
-        width: var(--cur);
-        height: var(--cur);
-        background: var(--s);
-        border: var(--bw) solid var(--c);
-        box-shadow: var(--shadow-stamp-sm);
-    }
-    .sm .cur span {
-        box-shadow: none;
+    .cur .name {
+        font-weight: var(--weight-bold, 700);
+        color: var(--ink-1);
     }
     p {
-        margin-top: var(--space-3);
+        margin-top: var(--space-4);
         font: var(--weight-semibold) 1.75rem / 1.2 var(--font-display);
         color: var(--ink-1);
+    }
+    @media (max-width: 639px) {
+        .name {
+            display: none;
+        }
+    }
+    @media (min-width: 640px) {
+        .hide {
+            display: none;
+        }
     }
 </style>

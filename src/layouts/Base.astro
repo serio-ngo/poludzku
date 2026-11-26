@@ -34,7 +34,7 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href.replace(/\/$/, "");
             )
         }
         <Font cssVariable="--font-newsreader" preload />
-        <Font cssVariable="--font-libre-franklin" preload={[{ weight: 400 }]} />
+        <Font cssVariable="--font-libre-franklin" preload={[{ weight: 400 }, { weight: 800 }]} />
         <Font cssVariable="--font-jetbrains-mono" />
         <slot name="head" />
     </head>

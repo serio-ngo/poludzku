@@ -25,4 +25,5 @@
   --state-watch-surface: var(--watch-soft);
   --focus-ring: var(--watch);
   --shadow-stamp-sm: 2px 2px 0 var(--ink-1);
+  --shadow-stamp: 3px 3px 0 var(--ink-1);
 }

@@ -7,11 +7,11 @@
     "node": ">=22"
   },
   "scripts": {
-    "dev": "astro dev --port 4321",
+    "dev": "node scripts/dev-vars.mjs && astro dev --port 4321",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "node scripts/dev-vars.mjs && astro preview --port 4321",
     "typecheck": "wrangler types && astro check",
-    "test": "node --test src tests",
+    "test": "node --test --experimental-strip-types \"src/**/*.test.mjs\" \"tests/**/*.test.mjs\"",
     "test:e2e": "playwright test",
     "a11y": "node scripts/a11y.mjs",
     "gates": "node scripts/gates.mjs",
@@ -24,9 +24,9 @@
     "check": "npm run typecheck && npm run format:check && npm run knip && npm run spell && npm run docs:links && npm run gates && npm run build && npm run test"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "14.4.9",
+    "@astrojs/cloudflare": "14.3.4",
     "@lucide/astro": "1.44.0",
-    "astro": "7.3.2",
+    "astro": "7.3.8",
     "universal-github-app-jwt": "2.2.2"
   },
   "devDependencies": {

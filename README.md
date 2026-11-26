@@ -14,8 +14,28 @@ public repositories.
 
 ## Status
 
-Planning. No application code yet. The contracts below are the source of truth; the
-[delivery plan](.prd/delivery.md) builds and verifies a runnable candidate in one session.
+v1 candidate: the task and project screens, the stage engine, sessions and the GitHub App
+sign-in are built and verified locally. It is not yet a public release. The contracts below
+are the source of truth; the [delivery plan](.prd/delivery.md) says what release still needs.
+
+## Run it
+
+```sh
+npm ci
+npm run dev
+```
+
+Open <http://localhost:4321>. This needs no account: with `GITHUB_UPSTREAM=synthetic` it reads
+invented repositories under the owner `przyklad`, for example `/gh/przyklad/strona`.
+
+For live mode, copy `.dev.vars.example` to `.dev.vars` and fill in your GitHub App's values.
+Register the App from `app-manifest.json` with GitHub's manifest flow.
+
+- `npm test` runs the unit tests.
+- `npm run test:e2e` runs the browser tests.
+- `npm run a11y` runs the accessibility check.
+- `npm run gates` runs the product gates.
+- `npm run check` runs types, format, dead code, spelling, links, gates, build and unit tests.
 
 ## Reference
 
@@ -31,4 +51,5 @@ Planning. No application code yet. The contracts below are the source of truth; 
 ## License
 
 Code: [MIT](LICENSE). Text in `.prd/` and `src/content/`: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
-The „po ludzku” and „serio” names and marks are not licensed for reuse.
+The „po ludzku” and „serio” names and marks, including `public/brand/`, are not licensed for reuse.
+Fonts in `src/assets/fonts/` are under the SIL Open Font License.

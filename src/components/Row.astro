@@ -1,0 +1,71 @@
+---
+import Glyph from "./Glyph.astro";
+import Mover from "./Mover.astro";
+import Strip from "./Strip.astro";
+import type { Lang, View } from "./view.ts";
+
+/** One list row, one link: number, state glyph, small strip, title, mover. The viewer's row is lifted. */
+interface Props {
+    view: View;
+    lang: Lang;
+    href: string;
+    number: number;
+    title: string;
+}
+const { view, lang, href, number, title } = Astro.props;
+---
+
+<a class:list={["row", { mine: view.mover.kind === "viewer" }]} href={href}>
+    <span class="n">#{number}</span>
+    <Glyph name={view.stateGlyph as "circle"} lang={lang} />
+    <span class="s"><Strip view={view} lang={lang} size="sm" /></span>
+    <span class="t">{title}</span>
+    <span class="m"><Mover view={view} lang={lang} nobody={view.outcome !== "open"} /></span>
+</a>
+
+<style>
+    .row {
+        display: grid;
+        grid-template-columns: 3.25rem 1.5rem 112px minmax(0, 1fr) minmax(9rem, auto);
+        align-items: center;
+        column-gap: 20px;
+        padding: 18px 12px;
+        border: 0;
+        border-bottom: 1px solid var(--border-default);
+        color: var(--text-strong);
+    }
+    .row:hover,
+    .row:focus-visible {
+        background: var(--surface-card);
+    }
+    .mine {
+        background: var(--surface-card);
+    }
+    .n {
+        font: var(--weight-medium) 0.9375rem / 1.4 var(--font-mono);
+        color: var(--text-muted);
+    }
+    .t {
+        font: var(--weight-medium) 1.0625rem / 1.4 var(--font-ui);
+        overflow-wrap: anywhere;
+    }
+    @media (max-width: 639px) {
+        .row {
+            grid-template-columns: 3.25rem 1.5rem minmax(0, 1fr);
+            row-gap: 10px;
+        }
+        .m {
+            grid-column: 3;
+            grid-row: 1;
+            justify-self: end;
+        }
+        .t {
+            grid-column: 1 / -1;
+            grid-row: 2;
+        }
+        .s {
+            grid-column: 1 / -1;
+            grid-row: 3;
+        }
+    }
+</style>

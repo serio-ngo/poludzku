@@ -1,0 +1,41 @@
+---
+import { getCollection, render } from "astro:content";
+import Base from "../layouts/Base.astro";
+import Footer from "../components/Footer.astro";
+import TopBar from "../components/TopBar.astro";
+import type { Lang } from "../components/view.ts";
+
+interface Props {
+    lang: Lang;
+    slug: string;
+}
+const { lang, slug } = Astro.props;
+const entry = (await getCollection("pages", (e) => e.data.lang === lang && e.data.slug === slug))[0]!;
+const { Content } = await render(entry);
+const path = (lang === "en" ? "/en/" : "/") + slug;
+---
+
+<Base title={`${entry.data.title} · po ludzku`} lang={lang} alternates={{ pl: `/${slug}`, en: `/en/${slug}` }}>
+    <TopBar slot="top" lang={lang} path={path} signedIn={false} />
+    <article class="pl-page">
+        <h1>{entry.data.title}</h1>
+        <Content />
+    </article>
+    <Footer slot="foot" lang={lang} full />
+</Base>
+
+<style>
+    article {
+        max-width: 65ch;
+        padding-block: 3rem 4rem;
+    }
+    article > :global(* + *) {
+        margin-top: var(--space-4);
+    }
+    article > :global(h2) {
+        margin-top: 2rem;
+    }
+    h1 {
+        font-size: clamp(2rem, 5vw, 3rem);
+    }
+</style>

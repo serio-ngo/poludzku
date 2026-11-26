@@ -135,9 +135,11 @@ export default {
     deployments: "Wdrożenia",
   },
   sample: "Przykład",
+  groups: { people: "Ruch człowieka", rest: "Pozostałe" },
   tagline: { before: "Jedno zadanie. ", marked: "Czyj ruch.", after: " Co dalej." },
   entry: { label: "owner/repo lub adres z GitHuba", placeholder: "owner/repo", button: "Otwórz" },
   footer: { publisher: "Fundacja Serio", terms: "Regulamin", licence: "Licencja MIT", source: "Kod źródłowy" },
-  nav: { lang: "EN" },
+  nav: { lang: "EN", home: "Strona główna" },
+  sampleTitle: "Dodanie stopki do artykułu",
   readAt: (time: string) => `Odczytano o ${time}`,
 }

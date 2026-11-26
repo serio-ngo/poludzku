@@ -1,5 +1,6 @@
 ---
-import Base from "../layouts/Base.astro";
+import Home from "../views/Home.astro";
+export const prerender = true;
 ---
 
-<Base title="po ludzku"><p class="pl-wm__name" style="--wm-size: 2rem">po ludzku</p></Base>
+<Home lang="pl" />

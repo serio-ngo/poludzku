@@ -1,0 +1,42 @@
+---
+import Base from "../layouts/Base.astro";
+import Footer from "../components/Footer.astro";
+import TopBar from "../components/TopBar.astro";
+import Unavailable from "../components/Unavailable.astro";
+import type { Lang } from "../components/view.ts";
+import type { Page } from "../lib/load.ts";
+import NotFound from "./NotFound.astro";
+import Project from "./Project.astro";
+import Task from "./Task.astro";
+
+/** Body of every gh route: the page `loadGh` chose, in the shell all tool screens share. */
+interface Props {
+    lang: Lang;
+    page: Exclude<Page, { page: "invalid" }> | { page: "invalid" };
+}
+const { lang, page: p } = Astro.props;
+const { owner = "", repo = "" } = Astro.params;
+const title = p.page === "task" ? p.ev.title : `${owner}/${repo}`;
+---
+
+{
+    p.page === "invalid" ? (
+        <NotFound lang={lang} />
+    ) : (
+        <Base title={title} lang={lang} noindex>
+            <TopBar slot="top" lang={lang} path={Astro.url.pathname} signedIn={!!Astro.locals.viewer} />
+            <div class="pl-page">
+                {p.page === "unavailable" && <Unavailable kind={p.kind} lang={lang} action={p.action} />}
+                {p.page === "list" && <Project lang={lang} owner={owner} repo={repo} {...p} />}
+                {p.page === "task" && <Task lang={lang} owner={owner} repo={repo} {...p} />}
+            </div>
+            <Footer slot="foot" lang={lang} />
+        </Base>
+    )
+}
+
+<style>
+    .pl-page {
+        padding-block: 2.5rem 6rem;
+    }
+</style>

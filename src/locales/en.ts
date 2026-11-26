@@ -127,10 +127,12 @@ const en: Dict = {
     deployments: "Deployments",
   },
   sample: "Example",
+  groups: { people: "A person moves", rest: "Others" },
   tagline: { before: "One task. ", marked: "Whose move.", after: " What next." },
   entry: { label: "owner/repo or a GitHub address", placeholder: "owner/repo", button: "Open" },
   footer: { publisher: "Fundacja Serio", terms: "Terms", licence: "MIT licence", source: "Source code" },
-  nav: { lang: "PL" },
+  nav: { lang: "PL", home: "Home" },
+  sampleTitle: "Add an article footer",
   readAt: (time) => `Read at ${time}`,
 }
 

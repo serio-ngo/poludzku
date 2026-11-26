@@ -1,0 +1,64 @@
+---
+import Glyph from "../components/Glyph.astro";
+import Row from "../components/Row.astro";
+import Unavailable from "../components/Unavailable.astro";
+import { clock } from "../lib/format.ts";
+import { t } from "../locales/index.ts";
+import type { Lang } from "../components/view.ts";
+
+interface Props {
+    lang: Lang;
+    owner: string;
+    repo: string;
+    rows: { number: number; title: string; updatedAt: string; view: any }[];
+    partial: boolean;
+    readAt: string;
+}
+const { lang, owner, repo, rows, partial, readAt } = Astro.props;
+const d = t(lang);
+const base = `${lang === "en" ? "/en" : ""}/gh/${owner}/${repo}`;
+const github = `https://github.com/${owner}/${repo}`;
+const time = clock(readAt);
+const byRecent = (a: { updatedAt: string }, b: { updatedAt: string }) => b.updatedAt.localeCompare(a.updatedAt);
+const person = (r: (typeof rows)[number]) => ["viewer", "person", "someone"].includes(r.view.mover.kind);
+const groups = [
+    [d.groups.people, rows.filter(person).sort(byRecent)],
+    [d.groups.rest, rows.filter((r) => !person(r)).sort(byRecent)],
+].filter(([, g]) => g!.length) as [string, typeof rows][];
+---
+
+<h1 class="mono">{owner}/{repo}</h1>
+{
+    groups.map(([name, group]) => (
+        <section>
+            <h2 class="sr-only">{name}</h2>
+            {group.map((r) => <Row view={r.view} lang={lang} href={`${base}/${r.number}`} number={r.number} title={r.title} />)}
+        </section>
+    ))
+}
+{!rows.length && !partial && <Unavailable kind="empty" lang={lang} />}
+{partial && <Unavailable kind="partial" lang={lang} action={{ href: github, glyph: "external-link" }} />}
+<p class="bar">
+    <time datetime={readAt} title={d.readAt(time)}>{time}</time>
+    <a class="gl" href={base}><Glyph name="refresh-cw" lang={lang} /></a>
+    <a class="gl" href={github}><Glyph name="external-link" lang={lang} /></a>
+</p>
+
+<style>
+    h1 {
+        font: var(--weight-medium) 0.875rem / 1.4 var(--font-mono);
+        color: var(--text-muted);
+        margin-bottom: var(--space-6);
+    }
+    section + section {
+        margin-top: var(--space-5);
+        border-top: 1px solid var(--border-strong, var(--border-default));
+    }
+    .bar {
+        display: flex;
+        align-items: center;
+        margin-top: var(--space-6);
+        font: 0.8125rem / 1 var(--font-mono);
+        color: var(--text-faint);
+    }
+</style>

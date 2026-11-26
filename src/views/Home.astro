@@ -1,0 +1,91 @@
+---
+import Base from "../layouts/Base.astro";
+import Footer from "../components/Footer.astro";
+import Legend from "../components/Legend.astro";
+import Sample from "../components/Sample.astro";
+import TopBar from "../components/TopBar.astro";
+import { Content as HomePl } from "../content/home.md";
+import { Content as HomeEn } from "../content/home.en.md";
+import { t } from "../locales/index.ts";
+import type { Lang } from "../components/view.ts";
+
+interface Props {
+    lang: Lang;
+}
+const { lang } = Astro.props;
+const d = t(lang);
+const en = lang === "en";
+const Intro = en ? HomeEn : HomePl;
+---
+
+<Base title="po ludzku" lang={lang} alternates={{ pl: "/", en: "/en" }}>
+    <TopBar slot="top" lang={lang} path={en ? "/en" : "/"} signedIn={false} />
+    <div class="pl-page home">
+        <h1>{d.tagline.before}<mark class="pl-mark">{d.tagline.marked}</mark>{d.tagline.after}</h1>
+        <div class="cols">
+            <div class="entry">
+                <Intro />
+                <form method="get" action={en ? "/en/otworz" : "/otworz"}>
+                    <label class="sr-only" for="r">{d.entry.label}</label>
+                    <input id="r" name="r" placeholder={d.entry.placeholder} required autocapitalize="off" autocomplete="off" spellcheck="false" />
+                    <button type="submit">{d.entry.button}</button>
+                </form>
+            </div>
+            <Sample lang={lang} />
+        </div>
+        <Legend lang={lang} />
+    </div>
+    <Footer slot="foot" lang={lang} full />
+</Base>
+
+<style>
+    .home {
+        display: grid;
+        gap: 3rem;
+        padding-block: 3rem 4rem;
+    }
+    h1 {
+        font-size: clamp(2.75rem, 6vw, 4.5rem);
+        line-height: 1.04;
+        letter-spacing: -0.02em;
+    }
+    .cols {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        align-items: start;
+    }
+    .entry {
+        flex: 1 1 380px;
+        display: grid;
+        gap: var(--space-4);
+    }
+    .cols > :global(.sample) {
+        flex: 1 1 440px;
+    }
+    form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-3);
+    }
+    input {
+        flex: 1 1 14rem;
+        min-height: 44px;
+        padding: 0 var(--space-3);
+        font: var(--weight-medium) 1rem / 1 var(--font-mono);
+        color: var(--ink-1);
+        background: var(--surface-card);
+        border: 1px solid var(--ink-1);
+        border-radius: 0;
+    }
+    button {
+        min-height: 44px;
+        padding: 0 var(--space-5);
+        font: var(--weight-semibold) 1rem / 1 var(--font-ui);
+        color: var(--ink-1);
+        background: var(--marker);
+        border: 1px solid var(--ink-1);
+        box-shadow: var(--shadow-stamp-sm);
+        cursor: pointer;
+    }
+</style>

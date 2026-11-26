@@ -1,0 +1,6 @@
+# Offline-friendly: checks files on disk, never the live site or the owner's own domains.
+# Docs: lychee --offline --config lychee.toml README.md '.prd/**/*.md'
+# Migration check (run by hand against the preview, not in CI): lychee over the old
+# newsroom sitemap URLs, rewritten to the preview origin, must return only 301 -> 200.
+accept = ["200", "202", "206", "999"]
+exclude = ['^https://(www\.)?(poludzku\.info|serio\.org\.pl)']

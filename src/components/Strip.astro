@@ -1,0 +1,119 @@
+---
+import { t } from "../locales/index.ts";
+import Glyph from "./Glyph.astro";
+import { stageName, tone, type Lang, type View } from "./view.ts";
+
+/** Stage dots. `lg` adds the current number and name under the strip; `sm` (rows) is dots only. */
+interface Props {
+    view: View;
+    lang: Lang;
+    size?: "lg" | "sm";
+}
+const { view, lang, size = "lg" } = Astro.props;
+const d = t(lang);
+const open = view.outcome === "open";
+// shortcut: an unknown stage has no total, so assume the preset's (custom: 7); fine until configs show their stage count.
+const total = view.stage?.total ?? (view.preset === "generic" ? 5 : 7);
+const cur = open ? (view.stage?.index ?? -1) : view.outcome === "done" ? total + 1 : -1;
+const unknown = open && !view.stage;
+const name = stageName(lang, view.stageNameKey);
+const word = open ? name : d.outcome[view.outcome as "done"];
+const label = unknown ? d.glyph["circle-help"].word : open ? d.stripLabel(cur, total, name) : word;
+---
+
+<div class={`strip ${size}`} style={`${tone(view.stateGlyph)};--n:${total}`}>
+    {!(unknown && size === "lg") && <span class="sr-only">{label}</span>}
+    <ol aria-hidden="true">
+        {
+            Array.from({ length: total }, (_, k) => {
+                const i = k + 1;
+                const s = i < cur ? "done" : i === cur ? "cur" : i === cur + 1 ? "next" : "later";
+                return (
+                    <li class={s}>
+                        <span>{s === "cur" && size === "lg" ? i : ""}</span>
+                    </li>
+                );
+            })
+        }
+    </ol>
+    {size === "lg" && <p>{unknown ? <Glyph name="circle-help" lang={lang} size={28} /> : word}</p>}
+</div>
+
+<style>
+    .strip {
+        --slot: 34px;
+        --dot: 14px;
+        --cur: 34px;
+        --bw: 2px;
+    }
+    .sm {
+        --slot: 14px;
+        --dot: 8px;
+        --cur: 14px;
+        --bw: 1.5px;
+        width: 112px;
+        max-width: 100%;
+    }
+    ol {
+        display: grid;
+        grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    li {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: var(--slot);
+    }
+    /* connector to the next dot: ink once the segment is completed */
+    li::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        width: 100%;
+        top: calc(50% - 1px);
+        height: 2px;
+        background: var(--line-1);
+    }
+    li.done::after {
+        background: var(--ink-1);
+    }
+    li:last-child::after {
+        display: none;
+    }
+    span {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        place-items: center;
+        width: var(--dot);
+        height: var(--dot);
+        border-radius: 50%;
+        background: var(--surface-card);
+        border: var(--border-mid) solid var(--line-2);
+        font: var(--weight-semibold) 0.875rem / 1 var(--font-mono);
+        color: var(--ink-1);
+    }
+    .done span {
+        background: var(--ink-1);
+        border: var(--bw) solid var(--ink-1);
+    }
+    .next span {
+        border: var(--bw) dashed var(--ink-1);
+    }
+    .cur span {
+        width: var(--cur);
+        height: var(--cur);
+        background: var(--s);
+        border: var(--bw) solid var(--c);
+        box-shadow: var(--shadow-stamp-sm);
+    }
+    p {
+        margin-top: var(--space-3);
+        font: var(--weight-semibold) 1.75rem / 1.2 var(--font-display);
+        color: var(--ink-1);
+    }
+</style>

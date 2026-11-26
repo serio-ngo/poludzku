@@ -1,9 +1,8 @@
 ---
 import Base from "../layouts/Base.astro";
 import Footer from "../components/Footer.astro";
+import Glyph from "../components/Glyph.astro";
 import TopBar from "../components/TopBar.astro";
-import { Content as HomePl } from "../content/home.md";
-import { Content as HomeEn } from "../content/home.en.md";
 import { t } from "../locales/index.ts";
 import type { Lang } from "../components/view.ts";
 
@@ -13,20 +12,36 @@ interface Props {
 const { lang } = Astro.props;
 const d = t(lang);
 const en = lang === "en";
-const Intro = en ? HomeEn : HomePl;
+const columns = [1, 4, 6, 7];
 ---
 
 <Base title="po ludzku" lang={lang} alternates={{ pl: "/", en: "/en" }}>
     <TopBar slot="top" lang={lang} path={en ? "/en" : "/"} signedIn={false} />
     <div class="pl-page home">
         <h1>{d.tagline.before}<mark class="pl-mark">{d.tagline.marked}</mark>{d.tagline.after}</h1>
-        <div class="entry">
-            <Intro />
-            <form method="get" action={en ? "/en/open" : "/open"}>
-                <label class="sr-only" for="r">{d.entry.label}</label>
+        <form method="get" action={en ? "/en/open" : "/open"}>
+            <label class="sr-only" for="r">{d.entry.label}</label>
+            <span class="field">
+                <span class="prefix">github.com/</span>
                 <input id="r" name="r" value="serio-ngo/poludzku" placeholder={d.entry.placeholder} required autocapitalize="off" autocomplete="off" spellcheck="false" />
-                <button type="submit">{d.entry.button}</button>
-            </form>
+            </span>
+            <button type="submit">{d.entry.button}<Glyph name="arrow-right" lang={lang} size={20} label="" /></button>
+        </form>
+        <div class="preview" role="img" aria-label={d.entry.preview}>
+            {
+                columns.map((n) => (
+                    <div class="col">
+                        <span class="pl-label">{n} · {d.stages.lifecycle[n]}</span>
+                        <div class:list={["card", n === 4 && "hot"]}>
+                            <i class="bar"></i><i class="bar"></i><i class="dot"></i>
+                            {n === 4 && <b class="chip">{d.mover.viewer}</b>}
+                        </div>
+                        {n !== 4 && n !== 7 && (
+                            <div class="card"><i class="bar"></i><i class="bar"></i><i class="dot"></i></div>
+                        )}
+                    </div>
+                ))
+            }
         </div>
     </div>
     <Footer slot="foot" lang={lang} full />
@@ -35,43 +50,132 @@ const Intro = en ? HomeEn : HomePl;
 <style>
     .home {
         display: grid;
-        gap: 3rem;
-        padding-block: 3rem 4rem;
+        grid-template-columns: minmax(0, 1fr);
+        justify-items: center;
+        gap: 2.5rem;
+        padding-block: 6rem 4rem;
+        text-align: center;
     }
     h1 {
+        font-family: var(--font-display);
         font-size: clamp(2.75rem, 6vw, 4.5rem);
         line-height: 1.04;
         letter-spacing: -0.02em;
     }
-    .entry {
-        max-width: 40rem;
-        display: grid;
-        gap: var(--space-4);
-    }
     form {
         display: flex;
-        flex-wrap: wrap;
-        gap: var(--space-3);
+        width: 100%;
+        max-width: 560px;
+    }
+    .field {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        min-width: 0;
+        padding-left: 14px;
+        background: var(--surface-card);
+        border: 1.5px solid var(--ink-1);
+        border-radius: var(--radius-2) 0 0 var(--radius-2);
+        font: var(--weight-regular) var(--text-body) / 1 var(--font-mono);
+    }
+    .prefix {
+        color: var(--text-muted);
     }
     input {
-        flex: 1 1 14rem;
-        min-height: 46px;
-        padding: 0 14px;
-        font: var(--weight-regular) var(--text-body) / 1 var(--font-ui);
+        flex: 1;
+        min-width: 0;
+        min-height: 54px;
+        padding: 0 14px 0 0;
+        font: inherit;
         color: var(--ink-1);
-        background: var(--surface-card);
-        border: var(--border-mid) solid var(--ink-1);
-        border-radius: var(--radius-1);
+        background: transparent;
+        border: 0;
     }
     button {
-        min-height: 46px;
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        min-height: 56px;
         padding: 0 var(--space-5);
         font: var(--weight-semibold) var(--text-body) / 1 var(--font-ui);
         color: var(--ink-1);
         background: var(--marker);
-        border: var(--border-mid) solid var(--ink-1);
-        border-radius: var(--radius-1);
-        box-shadow: var(--shadow-stamp-sm);
+        border: 1.5px solid var(--ink-1);
+        border-left: 0;
+        border-radius: 0 var(--radius-2) var(--radius-2) 0;
         cursor: pointer;
+    }
+    button:hover {
+        background: var(--marker-deep);
+    }
+    .preview {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        width: 100%;
+        max-width: 880px;
+        padding: 20px;
+        text-align: left;
+        background: var(--surface-card);
+        border: 1.5px solid var(--ink-1);
+        border-radius: var(--radius-2);
+        box-shadow: var(--shadow-stamp);
+    }
+    .col {
+        display: grid;
+        align-content: start;
+        gap: 10px;
+    }
+    .card {
+        display: grid;
+        gap: 7px;
+        justify-items: start;
+        padding: 12px;
+        border: 1px solid var(--border-default);
+        border-radius: 6px;
+    }
+    .card.hot {
+        background: var(--marker);
+        border-color: var(--ink-1);
+        box-shadow: var(--shadow-stamp-sm);
+    }
+    .bar {
+        height: 7px;
+        width: 100%;
+        background: var(--paper-3);
+        border-radius: 4px;
+    }
+    .hot .bar {
+        background: var(--ink-1);
+        opacity: 0.25;
+    }
+    .dot {
+        width: 14px;
+        height: 14px;
+        background: var(--paper-3);
+        border-radius: 50%;
+    }
+    .chip {
+        padding: 2px 10px;
+        font: var(--type-label);
+        color: var(--marker);
+        background: var(--ink-1);
+        border-radius: 999px;
+    }
+    @media (max-width: 420px) {
+        .prefix {
+            display: none;
+        }
+        .field {
+            padding-left: 0;
+        }
+        input {
+            padding-left: 14px;
+        }
+    }
+    @media (max-width: 640px) {
+        .preview {
+            grid-template-columns: repeat(2, 1fr);
+        }
     }
 </style>

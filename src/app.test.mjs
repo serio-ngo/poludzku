@@ -7,6 +7,7 @@ import { entryPath } from "./lib/entry.ts";
 import { getRec, putRec, safeNext, sessionCookie } from "./lib/session.ts";
 import { isLocalGh, isSynthetic, readNext } from "./lib/auth.ts";
 import { __removeInstallation, __reset, __revokeAccess, __setVisibility, syntheticFetch } from "./lib/synthetic/index.ts";
+import { board } from "./components/view.ts";
 import pl from "./locales/pl.ts";
 import en from "./locales/en.ts";
 import { SITE } from "./config/site.ts";
@@ -73,6 +74,18 @@ test("empty, failed and partial lists are three different answers", async () => 
     SITE.requestBudget.requests = budget;
     assert.equal(partial.data.partial, true);
     assert.deepEqual([full.data.partial, full.data.rows.length], [false, 30]);
+});
+
+test("the stage board keeps every row and puts an unknown stage in the trailing column", async () => {
+    const rows = async (repo) => (await api().listTasks("example", repo)).data.rows;
+    const count = (cols) => cols.reduce((n, c) => n + c.rows.length, 0);
+    const [w, c] = [await rows("website"), await rows("custom")];
+    const website = board(w, "en");
+    assert.deepEqual([website.length, count(website)], [7, w.length]);
+    const custom = board(c, "en");
+    const last = custom.at(-1);
+    assert.equal(count(custom), c.length);
+    assert.deepEqual([last.index, last.rows.map((r) => r.number)], [null, [4]]);
 });
 
 test("private data reaches only a viewer GitHub lets in", async () => {

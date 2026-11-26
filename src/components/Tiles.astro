@@ -1,6 +1,7 @@
 ---
 import Glyph from "./Glyph.astro";
 import Mover from "./Mover.astro";
+import { t } from "../locales/index.ts";
 import { stageName, tone, type Lang, type View } from "./view.ts";
 
 interface Props {
@@ -9,25 +10,38 @@ interface Props {
 }
 const { view, lang } = Astro.props;
 const open = view.outcome === "open";
+const d = t(lang);
 ---
 
 <div class="tiles">
-    <div class="tile"><Mover view={view} lang={lang} size={28} nobody={!open} /></div>
+    <div class="cell">
+        <span class="pl-label">{d.cells.mover}</span>
+        <div class="value">
+            {view.mover.kind === "viewer" && open ? <mark class="pl-mark">{d.cells.yours}</mark> : <Mover view={view} lang={lang} size={28} nobody={!open} />}
+        </div>
+    </div>
     {
         open && (
             <>
-                <div class="tile health" style={tone(view.healthGlyph)}>
-                    <Glyph name={view.healthGlyph as "circle"} lang={lang} size={28} />
+                <div class="cell">
+                    <span class="pl-label">{d.cells.checks}</span>
+                    <div class="value" style={tone(view.healthGlyph)}>
+                        <Glyph name={view.healthGlyph as "circle"} lang={lang} size={28} label="" />
+                        <span>{d.glyph[view.healthGlyph as "circle"].word}</span>
+                    </div>
                 </div>
-                <div class="tile">
-                    {view.next ? (
-                        <>
-                            <Glyph name="arrow-right" lang={lang} size={28} />
-                            <span>{stageName(lang, view.nextNameKey)}</span>
-                        </>
-                    ) : (
-                        <Glyph name="circle-help" lang={lang} size={28} />
-                    )}
+                <div class="cell">
+                    <span class="pl-label">{d.cells.next}</span>
+                    <div class="value">
+                        {view.next ? (
+                            <>
+                                <Glyph name="arrow-right" lang={lang} size={28} label="" />
+                                <span>{stageName(lang, view.nextNameKey)}</span>
+                            </>
+                        ) : (
+                            <Glyph name="circle-help" lang={lang} size={28} />
+                        )}
+                    </div>
                 </div>
             </>
         )
@@ -36,26 +50,37 @@ const open = view.outcome === "open";
 
 <style>
     .tiles {
-        display: flex;
-        flex-wrap: wrap;
-        gap: var(--space-4);
-        --mover-font: var(--weight-semibold) 1.375rem / 1.2 var(--font-display);
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        border-top: var(--rule);
+        border-bottom: var(--hairline);
+        --mover-font: var(--weight-semibold) 1.75rem / 1.2 var(--font-display);
     }
-    .tile {
-        flex: 1 1 200px;
+    .cell {
+        min-width: 0;
+        padding: 24px 0;
+    }
+    .cell + .cell {
+        padding-left: 32px;
+        border-left: var(--hairline);
+    }
+    .value {
         display: flex;
         align-items: center;
         gap: var(--space-3);
-        min-width: 0;
-        padding: 20px;
-        background: var(--surface-card);
-        border: 1px solid var(--border-default);
-        border-radius: var(--radius-2);
+        margin-top: var(--space-3);
         font: var(--mover-font);
+        color: var(--ink-1);
         overflow-wrap: anywhere;
     }
-    .health {
-        background: var(--s);
-        border-color: var(--c);
+    @media (max-width: 639px) {
+        .tiles {
+            grid-template-columns: minmax(0, 1fr);
+        }
+        .cell + .cell {
+            padding-left: 0;
+            border-left: 0;
+            border-top: var(--hairline);
+        }
     }
 </style>

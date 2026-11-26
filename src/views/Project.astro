@@ -2,6 +2,7 @@
 import Glyph from "../components/Glyph.astro";
 import Row from "../components/Row.astro";
 import Unavailable from "../components/Unavailable.astro";
+import { board } from "../components/view.ts";
 import { clock } from "../lib/format.ts";
 import { t } from "../locales/index.ts";
 import type { Lang } from "../components/view.ts";
@@ -19,46 +20,169 @@ const d = t(lang);
 const base = `${lang === "en" ? "/en" : ""}/gh/${owner}/${repo}`;
 const github = `https://github.com/${owner}/${repo}`;
 const time = clock(readAt);
-const byRecent = (a: { updatedAt: string }, b: { updatedAt: string }) => b.updatedAt.localeCompare(a.updatedAt);
-const person = (r: (typeof rows)[number]) => ["viewer", "person", "someone"].includes(r.view.mover.kind);
-const groups = [
-    [d.groups.people, rows.filter(person).sort(byRecent)],
-    [d.groups.rest, rows.filter((r) => !person(r)).sort(byRecent)],
-].filter(([, g]) => g!.length) as [string, typeof rows][];
+const viewer = Astro.locals.viewer;
+const mineRows = rows.filter((r) => r.view.mover.kind === "viewer");
+const onlyMine = !!viewer && Astro.url.searchParams.get("mine") === "1";
+const shown = onlyMine ? mineRows : rows;
+const columns = board(shown, lang);
 ---
 
-<h1 class="mono">{owner}/{repo}</h1>
-{
-    groups.map(([name, group]) => (
-        <section>
-            <h2 class="sr-only">{name}</h2>
-            {group.map((r) => <Row view={r.view} lang={lang} href={`${base}/${r.number}`} number={r.number} title={r.title} />)}
-        </section>
-    ))
-}
-{!rows.length && !partial && <Unavailable kind="empty" lang={lang} />}
-{partial && <Unavailable kind="partial" lang={lang} action={{ href: github, glyph: "external-link" }} />}
-<p class="bar">
-    <time datetime={readAt} title={d.readAt(time)}>{time}</time>
-    <a class="gl" href={base}><Glyph name="refresh-cw" lang={lang} /></a>
+<div class="head">
+    <h1><span class="o">{owner} /</span> {repo}</h1>
+    {
+        viewer && (
+            <nav class="seg">
+                <a href="?mine=1" aria-current={onlyMine ? "page" : undefined}>{d.board.mine} <small>{mineRows.length}</small></a>
+                <a href={base} aria-current={onlyMine ? undefined : "page"}>{d.board.all} <small>{rows.length}</small></a>
+            </nav>
+        )
+    }
+    <a class="gl" href={base + Astro.url.search} title={d.readAt(time)}><Glyph name="refresh-cw" lang={lang} /></a>
     <a class="gl" href={github}><Glyph name="external-link" lang={lang} /></a>
-</p>
+    <time datetime={readAt}>{time}</time>
+</div>
+{
+    shown.length > 0 && (
+        <ol class="board">
+            {columns.map((c) => (
+                <li class:list={{ none: !c.rows.length }}>
+                    <header>
+                        <span class="i">{c.index}</span>
+                        <span class="name">{c.name}</span>
+                        <span class="count">{c.rows.length}</span>
+                    </header>
+                    {c.rows.length ? (
+                        c.rows.map((r) => <Row view={r.view} lang={lang} href={`${base}/${r.number}`} number={r.number} title={r.title} />)
+                    ) : (
+                        <p class="empty">—</p>
+                    )}
+                </li>
+            ))}
+        </ol>
+    )
+}
+{!shown.length && !partial && <Unavailable kind="empty" lang={lang} />}
+{partial && <Unavailable kind="partial" lang={lang} action={{ href: github, glyph: "external-link" }} />}
 
 <style>
-    h1 {
-        font: var(--weight-medium) 0.875rem / 1.4 var(--font-mono);
-        color: var(--text-muted);
+    .head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--space-2);
         margin-bottom: var(--space-6);
     }
-    section + section {
-        margin-top: var(--space-5);
-        border-top: 1px solid var(--border-strong, var(--border-default));
+    h1 {
+        flex: 1 1 auto;
+        margin: 0;
+        font: var(--weight-medium) 2rem / 1.15 var(--font-display);
+        letter-spacing: -0.02em;
+        overflow-wrap: anywhere;
     }
-    .bar {
+    .o {
+        color: var(--text-muted);
+    }
+    .seg {
+        display: inline-flex;
+        border: var(--border-mid) solid var(--ink-1);
+        border-radius: var(--radius-1);
+        overflow: hidden;
+    }
+    .seg a {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 40px;
+        padding-inline: 14px;
+        border: 0;
+        font: 600 0.875rem / 1 var(--font-ui);
+        color: var(--text-strong);
+    }
+    .seg a + a {
+        border-left: var(--border-mid) solid var(--ink-1);
+    }
+    .seg a[aria-current] {
+        background: var(--ink-1);
+        color: var(--paper-0);
+    }
+    .seg small {
+        font: 0.75rem / 1 var(--font-mono);
+    }
+    time {
+        font: 0.75rem / 1 var(--font-mono);
+        color: var(--text-faint);
+    }
+    .board {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(8.5rem, 1fr);
+        align-items: start;
+        gap: 12px;
+        margin: 0;
+        padding: 0 0 var(--space-4);
+        list-style: none;
+        overflow-x: auto;
+    }
+    .board li {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        min-width: 0;
+    }
+    header {
         display: flex;
         align-items: center;
-        margin-top: var(--space-6);
-        font: 0.8125rem / 1 var(--font-mono);
-        color: var(--text-faint);
+        gap: 8px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--ink-1);
+    }
+    .i {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+        width: 24px;
+        height: 24px;
+        border: var(--border-mid) solid var(--ink-1);
+        border-radius: 50%;
+        font: 0.75rem / 1 var(--font-mono);
+    }
+    .i:empty {
+        display: none;
+    }
+    .name {
+        font: 600 0.875rem / 1.2 var(--font-ui);
+    }
+    .count {
+        margin-left: auto;
+        font: 0.75rem / 1 var(--font-mono);
+        color: var(--text-muted);
+    }
+    .empty {
+        margin: 0;
+        padding: 14px;
+        border: 1px dashed var(--border-default);
+        border-radius: var(--radius-2);
+        color: var(--text-muted);
+        text-align: center;
+    }
+    @media (max-width: 639px) {
+        h1 {
+            flex-basis: 100%;
+        }
+        .board {
+            grid-auto-flow: row;
+            grid-auto-columns: auto;
+            grid-template-columns: minmax(0, 1fr);
+        }
+        .board li {
+            gap: 0;
+        }
+        .none {
+            display: none;
+        }
+        header {
+            margin-bottom: 4px;
+        }
     }
 </style>

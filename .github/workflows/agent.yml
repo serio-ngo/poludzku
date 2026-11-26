@@ -24,6 +24,4 @@ permissions:
 jobs:
   agent:
     uses: serio-ngo/serio-focus/.github/workflows/lifecycle-agent.yml@main
-    with:
-      runner: serio-runner
     secrets: inherit

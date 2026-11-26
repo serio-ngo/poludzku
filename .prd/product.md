@@ -21,14 +21,17 @@ A branch is never a view of its own. `/gh/<owner>/<repo>/tree/<branch>` resolves
 
 ## Routes
 
-| Route                         | Shows                                                                                                                                      |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `/`                           | What the service does, one custom text block from `src/content/home.md`, the foundation's own projects as tabs                             |
-| `/<slug>`                     | An article or custom page from `src/content/pages/` — the only free-text space                                                             |
-| `/gh/<owner>/<repo>`          | Project: tabs of projects the viewer can see, then **one** list: tasks whose move is a person's first, then the rest. Each row is one line |
-| `/gh/<owner>/<repo>/<number>` | The task: the five answers, the stage strip, then technical detail folded under "Szczegóły"                                                |
+| Route                              | Shows                                                                                                                                      |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `/`                                | What the service does, one custom text block from `src/content/home.md`, the foundation's own projects as tabs                             |
+| `/<slug>`                          | An article or custom page from `src/content/pages/` — the only free-text space                                                             |
+| `/gh/<owner>/<repo>`               | Project: tabs of projects the viewer can see, then **one** list: tasks whose move is a person's first, then the rest. Each row is one line |
+| `/gh/<owner>/<repo>/<number>`      | The task: the five answers, the stage strip, then technical detail folded under "Szczegóły"                                                |
+| `/gh/<owner>/<repo>/tree/<branch>` | Redirect only, see above                                                                                                                   |
+| `/zaloguj`, `/wyloguj`             | GitHub sign-in and sign-out; no page of their own                                                                                          |
+| `/regulamin`                       | The only legal page: publisher, what the session stores and for how long, no tracking                                                      |
 
-Every route is a shareable URL. No state lives only in the browser except the viewer's last project tab.
+Every route is a shareable URL; `/en` mirrors each one. Nothing is stored in the browser except the session cookie of a signed-in viewer.
 
 ## The five answers
 
@@ -58,7 +61,9 @@ Commits and deployments appear only inside "Szczegóły", only as links. Time an
 
 - **Public repository**: open by URL, no login, once its organisation has installed the po ludzku GitHub App. A repository without the App is not shown: anonymous GitHub reads allow 60 requests an hour per server address, which one busy page exhausts, and nobody should find their organisation's work on poludzku.info without having opted in.
 - **Private repository**: "Zaloguj przez GitHub". The viewer sees exactly what GitHub lets their own account see — the server asks GitHub with the viewer's user token, never with a wider one. A person without a GitHub account cannot see a private repository; that is a GitHub rule, not ours.
-- An organisation opts in by installing the App with read-only permissions: Metadata, Issues, Pull requests, Checks, Actions, Commit statuses.
+- An organisation opts in by installing the App, read-only and without access to code: the permissions are in [tech.md](tech.md#the-github-app).
+- A signed-in viewer stays signed in for the 8 hours GitHub gives the token, then signs in again with one click.
+- Every page prints when its data was read ("stan z 10:42") and a reload link. Nothing refreshes by itself.
 
 ## Still open
 

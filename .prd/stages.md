@@ -6,7 +6,11 @@ A stage is derived, never stored. Labels alone do not tell the stage: in the Ser
 derive(task) -> { stage: 1..7 | 'done', state: 'now' | 'working' | 'fail' | 'done', mover: 'person' | 'agent' | 'ci' | 'none', who?: login, note, next }
 ```
 
-One pure function, unit-tested, no network inside it. Its first version is a port of `derive()` in `serio-ngo/ops` `lifecycle/console-mcp.mjs`, which already computes the stage and the person's next action for the lifecycle console. After the port the console imports the engine from this repository; two copies would drift.
+One pure function in plain JavaScript (`src/lib/stages.mjs`), unit-tested, no import and no network inside it. Its first version is a port of `derive()` in `serio-ngo/ops` `lifecycle/console-mcp.mjs`, which already computes the stage and the person's next action for the lifecycle console, including the cloud and by-hand lanes. After the port the console loads this file from `serio-ngo/poludzku` `main` through `gh api` and drops its own copy; two copies would drift. `main` is protected by a human-only ruleset, so the loaded file is as trusted as the console.
+
+## Agents of any kind
+
+A task's mover is `agent` when the latest actor on it is a GitHub `Bot` and a workflow run is in progress or the bot's pull request is a draft. This one rule covers the Serio `serio-agent[bot]`, Claude Code's action, GitHub Copilot's coding agent and Codex alike. GitHub offers no read API for Copilot agent session state ([community discussion 185347](https://github.com/orgs/community/discussions/185347), January 2026), so drafts and running workflows are the only portable signal.
 
 ## Serio preset
 

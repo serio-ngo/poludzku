@@ -2,6 +2,8 @@
 
 Two parents. From the po ludzku newsroom (`serio-ngo/news-interface`): the register row, the mono state word, the yellow marker, tokens only, no hero, no modal. From krok (`serio-ngo/krok`): one thing per screen, progress as dots, a control that cannot act is hidden, never greyed out.
 
+The rules below implement the W3C note [Making Content Usable for People with Cognitive and Learning Disabilities](https://www.w3.org/TR/coga-usable/): its objectives to help users focus, use clear content and not rely on memory. "Neurodivergent-friendly" is claimed only for what these rules, pa11y and keyboard tests prove, and after test sessions with neurodivergent users.
+
 ## The task screen
 
 Top to bottom, nothing else above the fold:
@@ -33,7 +35,7 @@ Colour is never the only carrier: the word is always there, and the strip dot of
 ## Calm rules
 
 - No animation except a 150 ms colour transition; honour `prefers-reduced-motion` by removing even that.
-- No auto-refresh that moves content. A quiet line "Zmieniło się — odśwież" appears when the server sees a newer state; the reader decides.
+- Nothing refreshes or moves by itself. The page prints "stan z 10:42" and a reload link; the reader decides.
 - No counts in red, no badges, no toasts, no sound, no notifications.
 - One emphasis per screen: the "Co się dzieje?" sentence.
 - Plain words. No "PR", "CI", "merge" or "label" in the five answers; they may appear only inside "Szczegóły". The glossary lives in `src/config/words.ts`, PL and EN side by side.

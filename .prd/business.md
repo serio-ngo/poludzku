@@ -25,7 +25,7 @@ po ludzku is read-only, shareable by URL, derived from GitHub so it never drifts
 
 ## Model
 
-No revenue. No ads, no paid tier, no tracking — the same posture as the newsroom footer. Costs stay inside Cloudflare's free Workers plan at foundation scale; the footer says "serwis niekomercyjny" only while that holds. Funding paths, each to be checked before applying: open-source grants for public digital infrastructure (for example NLnet NGI Zero), accessibility and digital-inclusion programmes, corporate open-source sponsorship through GitHub Sponsors, 1.5% after OPP status.
+No revenue. No ads, no paid tier, no tracking — the same posture as the newsroom footer. Costs stay inside Cloudflare's free Workers plan at foundation scale; the footer says "serwis niekomercyjny" only while that holds. Funding paths, each to be checked before applying: open-source grants for public digital infrastructure (NLnet's current calls; its NGI Zero Commons Fund closed its final call on 1 June 2026), accessibility and digital-inclusion programmes, corporate open-source sponsorship through GitHub Sponsors, 1.5% after OPP status.
 
 ## Message
 

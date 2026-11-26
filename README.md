@@ -24,6 +24,7 @@ Planning. No application code yet. The contracts below are the source of truth.
 - [Tech](.prd/tech.md) — Astro on Cloudflare, GitHub App, caching, reuse
 - [Business and marketing](.prd/business.md) — audience, model, channels, risks
 - [Migration](.prd/migration.md) — replacing the po ludzku newsroom on poludzku.info
+- [Delivery](.prd/delivery.md) — setup, five pull requests, what waits on the owner
 - [Agent instructions](AGENTS.md)
 
 ## License

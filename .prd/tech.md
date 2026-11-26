@@ -1,12 +1,30 @@
 # Technical design
 
-One Astro project with the Cloudflare adapter and one Worker. Prerender public content pages. Render the explicit GitHub routes and sign-in routes on request. Native links, forms, and `<details>` provide the interaction with zero client JavaScript. The service reads GitHub on demand and stores only sign-in sessions. It uses no project database or webhook. Use public dependencies and local assets with their licenses so a contributor can install, build, and test without private registry access.
+**Zero custom code where a ready tool exists.** One Astro project with the Cloudflare adapter and one Worker, zero client JavaScript, no database of our own, no webhooks. Prerender public content pages. Render the explicit GitHub routes and sign-in routes on request. Native links, forms, and `<details>` provide the interaction. The service reads GitHub on demand and stores only sign-in sessions. Use public dependencies and local assets with their licenses so a contributor can install, build, and test without private registry access.
+
+## Stack
+
+| Part | Choice | Why |
+| --- | --- | --- |
+| Site | Astro 7 with `@astrojs/cloudflare`; content pages prerendered, `/gh/**` rendered on request | The newsroom already runs Astro 7 on Workers; same build, same gates |
+| Client JS | None. Folded detail is native `<details>`; freshness is a printed time and a reload link | Nothing to hydrate, nothing to break, nothing that moves |
+| GitHub reads | Server-side `fetch` to GraphQL v4 (`repository.issueOrPullRequest(number:)`, `closedByPullRequestsReferences`, `closingIssuesReferences`, reviews, `statusCheckRollup`, comments) and REST for Actions runs; no Octokit | A few requests per uncached page, paginated only where evidence needs it |
+| Identity | The po ludzku GitHub App: an installation token for public repositories, the viewer's user token after sign-in | GitHub decides who sees what; one registration covers both |
+| App token | `universal-github-app-jwt` signs the App JWT; the installation token is cached for 50 of its 60 minutes | The only dependency added for auth; WebCrypto alone needs hand-written PEM handling |
+| Session | One Durable Object per opaque session identifier holds the user token for its 8-hour life | Strongly consistent: a Workers KV delete can stay readable elsewhere for up to 60 seconds, so a signed-out cookie could still work |
+| Cache | Workers Cache API, 60 s, anonymous snapshots of verified public data only | One GraphQL query per minute per page at most |
+| Tests | `node --test` for the engine; Playwright for the pages; both on synthetic responses | The runners the lifecycle gate expects |
+
+## Why no webhooks and no refresh tokens
+
+- **Rate limits are not the constraint.** An installation gets 5,000 GraphQL points an hour. A GraphQL query costs one point per hundred connections requested: the task query is 1 point, the first page of the project query (50 issues with labels, comments and up to 3 pull requests each with reviews and checks) about 7. With the 60 s cache one busy project costs at most 420 points an hour. The access re-check is one REST call per anonymous request against the separate REST limit, so that cost grows with traffic, not with project size. Webhooks would add an endpoint, a secret and signature checks to save points nobody needs.
+- **User tokens expire after 8 hours; we let them.** Storing the 6-month refresh token would keep a long-lived credential at rest for every viewer. Signing in again is one click for anyone already signed in to GitHub.
 
 ## The GitHub App
 
 The static site and fixture build work without GitHub credentials. Configure the read-only GitHub App for live repository access. Repository owners choose which repositories to install it on. Anonymous access requires an installed, opted-in repository that GitHub currently reports as public. Signed-in access uses a per-user GitHub App token. Its effective access is limited by the user's access and the App's installed repository access. Sign-in does not bypass either limit.
 
-Keep the App manifest in the repository. Grant the minimum read permissions needed for repository metadata, issues, pull requests, configured process evidence, checks, statuses, and workflow runs. Configure the App's Single file grant with `single_file=read` and `single_file_name=.github/poludzku.yml` and read that file on the repository's default branch. Omit general Contents permission and all write permissions. Verify the required reads with an actual App installation on a private test repository with synthetic data, including that the App can read the configuration file and cannot read a second file. Treat evidence that needs broader access as unavailable. Derive callback addresses from deployment configuration and keep App credentials in Worker secrets.
+Register the App once from `app-manifest.json` committed in the repository, so its permissions are reviewed in a pull request. Webhook off; user tokens expire. Grant the minimum read permissions needed for repository metadata, issues, pull requests, configured process evidence, checks, statuses, and workflow runs. Configure the App's Single file grant with `single_file=read` and `single_file_name=.github/poludzku.yml` and read that file on the repository's default branch. Omit general Contents permission and all write permissions. Verify the required reads with an actual App installation on a private test repository with synthetic data, including that the App can read the configuration file and cannot read a second file. Treat evidence that needs broader access as unavailable. Derive callback addresses from deployment configuration. The private key is converted from GitHub's PKCS#1 to the PKCS#8 that WebCrypto and `universal-github-app-jwt` need, in the same pipe that runs `wrangler secret put`; it and the client secret live only in Worker secrets, never in a file.
 
 Bind the authorization response to the sign-in attempt. Keep each session and its GitHub user token in a strongly consistent record, using a Cloudflare Durable Object in the same Worker for each opaque session identifier. The secure, HTTP-only cookie contains only that identifier. Authenticate each private request against that record, then check repository access with the viewer token. Keep session records and authorization decisions out of Workers KV and both the site and response caches. End the session at the earlier of token expiry and eight hours. Sign-out awaits durable deletion before reporting success and clears the cookie. A request that cannot verify its session receives no private data. Let the viewer sign in again after expiry without retaining a refresh token.
 
@@ -32,14 +50,31 @@ Use this attestation for authority instead of inferring it from review text. If 
 | Area | Contract |
 | --- | --- |
 | `src/lib/stages.mjs` | Pure stage, health, mover, and evidence derivation defined in [stages.md](stages.md) |
-| `src/lib/github.ts` | Server-only identity, access, pagination, and normalization of GitHub reads |
+| `src/lib/github.ts` | Server-only identity, access, pagination, and normalization of GitHub reads; the only file that talks to GitHub |
 | `src/pages/gh/` | Project, task, and branch routes with PL and EN entry points defined in [product.md](product.md) |
 | `src/pages/zaloguj/` | Sign-in start and callback. Sign-out ends the session |
-| `src/locales/` | PL and EN interface copy, presets, and glossary |
-| `src/content/` | Markdown home text and articles |
+| `src/config/site.ts` | App id, presets, cache and session limits; no organisation name hard-coded |
+| `src/locales/` | PL and EN interface copy, state words, presets, and glossary |
+| `src/content/` | Markdown home text, articles and `/regulamin` |
 
 Test the derivation with `node --test` and the pages with Playwright using synthetic GitHub responses. Exercise incomplete reads, current-head changes, route canonicalization, keyboard interaction, and isolation of private or viewer-derived data. Include a warmed public cache followed by visibility or installation loss, an expired session, and a second viewer who cannot access the first viewer's repository. Use two independent Worker instances bound to the same session namespace. Verify a private read succeeds through the second instance with the test cookie, sign out through the first instance, and replay the same cookie through the second. The replay must return no private data. Use fixture data created for tests and examples.
 
+## Brand without a private package
+
+`@serio-ngo/brand` is `UNLICENSED` and installs only with registry access, so an open-source repository cannot depend on it: an outside contributor's `npm ci` would fail. The repository carries its own copy of the tokens it uses (`src/styles/tokens/`, from news-interface), Newsreader, Libre Franklin and JetBrains Mono under their OFL licences, and the marks in `public/brand/` under the trademark note in the README. `brand-sync` does not run here; a brand change is copied by hand in a normal pull request. Without the private package the build needs no `NODE_AUTH_TOKEN`.
+
+## Reused from the newsroom
+
+`astro.config.mjs` shape, `Base.astro`, `src/styles/tokens/`, `glue` from `src/lib/format.ts` (Polish line breaks), `scripts/gates.mjs`, `scripts/docs-links.mjs`, `.pa11yci.json`, `lighthouserc.json`, `lychee.toml`, cspell, knip, prettier, `verify.yml`, `wrangler.jsonc`, deployment through Workers Builds. Not reused: records, the record verifier and its hooks, machine surfaces (RSS, ICS, llms.txt), social posting, `records.yml`, the newsroom skills.
+
+## Reused from krok
+
+The locale file pattern (`src/locales/pl.ts`, `en.ts`), progress as dots, the hidden-not-greyed rule.
+
+## Lifecycle
+
+This repository is public, so unlike the private pilots it can hold `main` rulesets: code-owner approval of the latest push and human-only updates. It joins the Serio lifecycle after the first release (topic `lifecycle`, then the console's `--setup-all`, which copies the agent secrets and workflows), and po ludzku then shows its own development. The first release is built with the local serio-focus `deliver` flow: see [delivery.md](delivery.md).
+
 ## Budgets
 
-Task page under 30 KB total HTML and CSS, 0 KB JavaScript, and LCP under 1.5 seconds on a cached view. Lighthouse accessibility score 100. Keep the measurement conditions consistent across runs. See [interface.md](interface.md) for keyboard and mobile acceptance.
+Task page under 30 KB total HTML and CSS, 0 KB JavaScript, and LCP under 1.5 seconds on a cached view. Lighthouse accessibility score 100. Copied from the newsroom's `lighthouserc.json` and tightened. Keep the measurement conditions consistent across runs. See [interface.md](interface.md) for keyboard and mobile acceptance.

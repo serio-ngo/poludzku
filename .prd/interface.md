@@ -1,5 +1,9 @@
 # Interface
 
+Two parents. From the po ludzku newsroom (`serio-ngo/news-interface`): the register row, the mono state word, the yellow marker, tokens only, no hero, no modal. From krok (`serio-ngo/krok`): one thing per screen, progress as dots, a control that cannot act is hidden, never greyed out.
+
+The rules implement the W3C note [Making Content Usable for People with Cognitive and Learning Disabilities](https://www.w3.org/TR/coga-usable/): help users focus, use clear content, do not rely on memory. "Neurodivergent-friendly" is claimed only for what these rules, pa11y and keyboard tests prove, and after test sessions with neurodivergent users.
+
 Present one task per screen and one list per project. Use a compact register row, a monospaced state word, and a marker for the viewer's own moves. Use local design tokens for type, spacing, colour, and focus. Prioritize the answer to “What is happening?” with the most prominent type on the task page.
 
 ## Task screen
@@ -46,16 +50,25 @@ Only “Szczegóły” / “Details” shows technical evidence. Use the native 
 
 Use one row per canonical task. Show the task number, state word, stage name, full title, and mover in the same order. Rows assigned to people come first, followed by other rows, with most recent activity first within each group. Add a marker and a visible “Twój ruch” / “Your move” cue on a row when the viewer can act. Use one line when space allows, and wrap on small screens. Keep one list and no filters in the first release.
 
-| List state | PL | EN |
-| --- | --- | --- |
-| Waiting for a move | czeka | waiting |
-| Work or checks underway | w pracy | working |
-| Parked or failed | stoi | stuck |
-| Completed | gotowe | done |
-| Closed without completion | zamknięte | closed |
-| Insufficient evidence | brak danych | unknown |
+| List state | PL | EN | Token |
+| --- | --- | --- | --- |
+| Waiting for a move | czeka | waiting | `--state-watch` |
+| Work or checks underway | w pracy | working | `--state-nochange` |
+| Parked or failed | stoi | stuck | `--state-change` |
+| Completed | gotowe | done | `--text-body` |
+| Closed without completion | zamknięte | closed | `--text-meta` |
+| Insufficient evidence | brak danych | unknown | `--text-meta` |
+
+One dictionary in `src/locales/`, mono, coloured by its token and always also a word. The viewer's marker means "this is yours", as the newsroom's marker meant "this concerns you".
 
 The task screen can explain whether a stuck task was parked or failed. Successful checks, current failures, pending work, a verified empty check set, and unavailable checks have distinct health text. Missing evidence can be “Brak danych o sprawdzeniach” / “Check results unavailable.”
+
+## Calm rules
+
+- One emphasis per screen: the "Co się dzieje?" sentence.
+- No counts in red, no badges, no toasts, no sound, no notifications.
+- Plain words. No "PR", "CI", "merge" or "label" in the five answers; they appear only inside "Szczegóły".
+- Every page passes pa11y (WCAG 2.2 AA) and keyboard-only use; the gates are copied from news-interface.
 
 ## Accessibility and freshness
 

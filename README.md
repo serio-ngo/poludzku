@@ -1,17 +1,34 @@
 # po ludzku
 
-A read-only view of GitHub work. Open one task to see what is happening, its stage, whether anything is wrong, whose move it is and what comes next. The project list puts tasks waiting for a person first.
+**GitHub work, in plain words. One task. Whose move. What next.**
+
+po ludzku shows one GitHub task at a time — an issue and its pull request — as a short
+answer anyone can read: what is happening, which stage it is in, whether it is fine,
+whose move it is, and what comes next. The project list puts tasks waiting for a person
+first. Built for teams that ship with AI agents and for people who find GitHub's own
+screens too loud: neurodivergent developers, project managers, board members, funders.
+
+Open source by [Fundacja Serio](https://serio.org.pl). Hosted at
+[poludzku.info](https://poludzku.info). Read-only. No ads, no tracking, no account for
+public repositories.
 
 ## Status
 
-Product design. This checkout contains the contracts and acceptance scenarios. The [one-session delivery plan](.prd/delivery.md) defines how to build and verify a runnable candidate.
+Planning. No application code yet. The contracts below are the source of truth; the
+[delivery plan](.prd/delivery.md) builds and verifies a runnable candidate in one session.
 
-## Design
+## Reference
 
-- [Product](.prd/product.md) and [reader outcomes](.prd/business.md)
-- [Stage rules](.prd/stages.md) and [task and project screens](.prd/interface.md)
-- [Architecture and access](.prd/tech.md)
-- [Deployment and link continuity](.prd/migration.md)
+- [Product](.prd/product.md) — what it says and does, scope, routes, access
+- [Stages](.prd/stages.md) — how GitHub evidence becomes a stage, health and a move
+- [Interface](.prd/interface.md) — calm UI rules, task and project screens
+- [Tech](.prd/tech.md) — Astro on Cloudflare, GitHub App, sessions, cache, reuse
+- [Business and marketing](.prd/business.md) — audience, model, channels, risks, acceptance
+- [Migration](.prd/migration.md) — replacing the po ludzku newsroom on poludzku.info
+- [Delivery](.prd/delivery.md) — one-session candidate, then release setup
 - [Agent instructions](AGENTS.md)
 
-The project uses the [Apache License, Version 2.0](LICENSE).
+## License
+
+Code: [MIT](LICENSE). Text in `.prd/` and `src/content/`: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+The „po ludzku” and „serio” names and marks are not licensed for reuse.

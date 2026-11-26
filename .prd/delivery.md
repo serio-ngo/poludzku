@@ -27,6 +27,24 @@ Deliver one locally runnable release candidate in a single working session. Use 
 2. The examples in [stages.md](stages.md) pass. A failed read never produces a successful empty list, and unrelated activity never advances a task.
 3. In PL and EN, Playwright verifies the five answers, person-first ordering, standalone and ambiguous pull requests, branch resolution, keyboard navigation and failure views. Check the page budgets in [tech.md](tech.md) on the production preview.
 4. Point two server instances at the same session store. Confirm that the same signed-in cookie can read a synthetic private title through both. Sign out through the first, then replay the saved cookie through the second. It must disclose no private title. Also verify denial after revoking repository access, removing an installation and changing a warmed public repository to private.
-5. Inspect the release tree, rendered demo and generated assets for identifiers and records. Verify the license and local document links. Record build proof, preview proof, live integration proof and public release proof separately; each needs its own observation.
+5. Inspect the release tree, rendered demo and generated assets for secrets, tokens and private content. Verify the license and local document links. Record build proof, preview proof, live integration proof and public release proof separately; each needs its own observation.
 
 When live credentials are already authorized, verify an opted-in task through the same adapter. Otherwise the session can prove the candidate against the synthetic upstream; live sign-in, production redirects and the domain switch remain release checks. Never archive an existing service on the strength of a fixture run.
+
+## Release
+
+The agent does each step; the owner gives only the consents named.
+
+| Step | How | Owner's part |
+| --- | --- | --- |
+| Register the GitHub App | Manifest flow in the built-in browser from the committed `app-manifest.json`; the agent exchanges the code with `POST /app-manifests/{code}/conversions` and pipes the key and secret into `wrangler secret put` | A "yes" in chat before the agent clicks Create and Install: GitHub requires an organisation owner's session for both |
+| Connect the repository to Workers Builds | Cloudflare dashboard in the built-in browser; there is no API to connect a repository yet ([workers-sdk 12058](https://github.com/cloudflare/workers-sdk/issues/12058)) | A "yes" in chat |
+| `main` ruleset | `gh api` as the organisation owner: code-owner approval of the latest push, human-only updates | None beyond the same "yes" |
+| Join the lifecycle after release 1 | Topic `lifecycle`, then the lifecycle console's `--setup-all` | None |
+| One stage engine | One hand-made pull request in the lifecycle console's repository: the console loads `stages.mjs` from this repository and drops its own derivation | One merge |
+
+If the built-in browser is not signed in to GitHub or Cloudflare, signing in there is the owner's only extra step.
+
+Moving `poludzku.info` from the newsroom Worker to this one replaces what readers see, so the agent asks once on the day, then detaches the domain from news-interface and deploys. [migration.md](migration.md) lists the checks around the switch.
+
+Owner's total: two consents, one merge of the candidate, one merge in the console's repository, one "go" for the switch.

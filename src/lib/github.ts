@@ -325,7 +325,7 @@ export function createGithub(o: {
     const devToken = local && o.loopback && env.GITHUB_UPSTREAM === "gh" ? env.GITHUB_DEV_TOKEN : undefined;
     const viewerToken = o.viewerToken ?? devToken;
     const synthetic =
-        local && (env.GITHUB_UPSTREAM === "synthetic" || (!env.GITHUB_APP_ID && !devToken));
+        local && (env.GITHUB_UPSTREAM === "synthetic" || (!env.GITHUB_APP_ID && env.GITHUB_UPSTREAM !== "gh"));
     const f = o.fetch ?? (synthetic ? (syntheticFetch as typeof fetch) : globalThis.fetch);
     const budget = {
         requests: Number(env.REQUEST_BUDGET ?? SITE.requestBudget.requests),

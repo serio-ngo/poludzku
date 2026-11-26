@@ -12,7 +12,9 @@ export const stageName = (lang: Lang, key: Key): string => {
 };
 
 export const board = <R extends { updatedAt: string; view: View }>(rows: R[], lang: Lang) => {
-    const preset = rows.find((r) => r.view.stage)?.view.preset;
+    const staged = rows.filter((r) => r.view.stage).map((r) => r.view.preset);
+    const share = (p: string) => staged.filter((q) => q === p).length;
+    const preset = staged.sort((a, b) => share(b) - share(a))[0];
     const fits = (r: R) => r.view.stage && r.view.preset === preset;
     const named: [number, string][] =
         preset === "custom"

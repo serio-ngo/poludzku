@@ -22,7 +22,6 @@ const hideWord = open && !unknown && !!names;
 ---
 
 <div class="strip" style={`--n:${total}`}>
-    {!unknown && <span class="sr-only">{label}</span>}
     <ol aria-label={label}>
         {
             Array.from({ length: total }, (_, k) => {

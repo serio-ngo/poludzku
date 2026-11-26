@@ -163,7 +163,6 @@ export function makeWorld(): Record<string, Repo> {
             issue(13, "Add blog", { state: "CLOSED", reason: "NOT_PLANNED" }),
             issue(14, "Add directions"),
             issue(15, "Add pricing"),
-            issue(34, "Fix contrast"),
         ],
         [
             draft(16, 6, { reviewers: ["ola"] }),
@@ -171,13 +170,7 @@ export function makeWorld(): Record<string, Repo> {
             reviewed(18, 8, { draft: false, reviewers: ["ola"], checks: ci("SUCCESS") }),
             reviewed(19, 9, { draft: false, checks: ci("SUCCESS") }),
             reviewed(20, 10, { draft: false, checks: ci("FAILURE") }),
-            pr(30, "Fix typos", { draft: false, reviewers: ["ben"] }),
             pr(31, "Shared fix", { draft: false, closes: [14, 15] }),
-            pr(32, "Contrast fix", {
-                head: "fix-contrast",
-                draft: false,
-                closes: [34],
-            }),
         ],
         [
             [20, "spec-review", "in_progress", null, { head_branch: "agent/2-search" }],
@@ -189,23 +182,9 @@ export function makeWorld(): Record<string, Repo> {
     add(
         "store",
         {},
+        [issue(1, "Add cart"), issue(3, "Add shipping"), issue(5, "Add ratings")],
         [
-            issue(1, "Add cart"),
-            issue(2, "Add payments"),
-            issue(3, "Add shipping"),
-            issue(4, "Add returns"),
-            issue(5, "Add ratings"),
-            issue(6, "Add coupons"),
-        ],
-        [
-            pr(12, "Payments", { closes: [2] }),
             pr(13, "Shipping", { draft: false, closes: [3], checks: ci("PENDING") }),
-            pr(14, "Zwroty", {
-                draft: false,
-                closes: [4],
-                checks: ci("SUCCESS"),
-                reviewers: ["ben"],
-            }),
             pr(15, "Oceny", {
                 draft: false,
                 closes: [5],
@@ -220,7 +199,6 @@ export function makeWorld(): Record<string, Repo> {
                     },
                 ],
             }),
-            pr(16, "Kupony", { draft: false, closes: [6], reviewers: ["ola"] }),
         ],
     );
 
@@ -232,21 +210,15 @@ export function makeWorld(): Record<string, Repo> {
         [
             issue(1, "Idea A", { labels: ["idea"], assignees: ["ola"] }),
             issue(2, "Work B", { labels: ["work"] }),
-            issue(3, "Review C", { labels: ["review"], assignees: ["ben"] }),
             issue(4, "Bez etykiety"),
         ],
     );
-    add("private", { private: true, access: ["ola"] }, [
-        issue(1, "Secret task"),
-        issue(2, "Second secret task"),
-    ]);
+    add("private", { private: true, access: ["ola"] }, [issue(1, "Secret task")]);
     add("empty", {});
     add(
         "many",
         { pageSize: 2 },
-        Array.from({ length: 30 }, (_, i) =>
-            issue(i + 1, `Task ${i + 1}`, i + 1 === 29 ? { assignees: ["ola"] } : {}),
-        ),
+        Array.from({ length: 30 }, (_, i) => issue(i + 1, `Task ${i + 1}`)),
     );
     add("outage", { fail: true });
     add("no-app", { installationId: null }, [issue(1, "Task")]);

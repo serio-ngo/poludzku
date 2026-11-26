@@ -13,9 +13,9 @@ export const authorizeUrl = (clientId: string, redirectUri: string, state: strin
 };
 export const isSynthetic = (env: Env) =>
     env.SITE_ORIGIN !== SITE.url &&
-    (env.GITHUB_UPSTREAM === "synthetic" || (!env.GITHUB_CLIENT_ID && env.GITHUB_UPSTREAM !== "gh"));
-export const isLocalGh = (env: Env) =>
-    env.SITE_ORIGIN !== SITE.url && env.GITHUB_UPSTREAM === "gh" && !env.GITHUB_CLIENT_ID;
+    (env.GITHUB_UPSTREAM === "synthetic" || (!env.GITHUB_APP_ID && env.GITHUB_UPSTREAM !== "gh"));
+export const isLocalGh = (env: Env, url: URL) =>
+    env.SITE_ORIGIN !== SITE.url && env.GITHUB_UPSTREAM === "gh" && ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname);
 export const syntheticCode = (as: string | null) => (as === "ben" ? "synthetic-ben" : "synthetic-ola");
 
 export const langOf = (next: string) => (/^\/en(\/|$)/.test(next) ? "en" : "pl");

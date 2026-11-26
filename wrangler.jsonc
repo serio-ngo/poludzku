@@ -6,4 +6,6 @@
   "durable_objects": { "bindings": [{ "name": "SESSIONS", "class_name": "SessionDO" }] },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["SessionDO"] }],
   "vars": { "SITE_ORIGIN": "https://poludzku.info" },
+  "assets": { "html_handling": "drop-trailing-slash" },
+  "previews": { "durable_objects": { "bindings": [{ "name": "SESSIONS", "class_name": "SessionDO" }] } },
 }

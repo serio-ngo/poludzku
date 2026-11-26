@@ -1,5 +1,6 @@
 import type { AstroGlobal } from "astro";
 import { env } from "cloudflare:workers";
+import { isLocalGh } from "./auth.ts";
 import { createGithub } from "./github.ts";
 import { parseRoute } from "./route.ts";
 import { derive, present } from "./stages.mjs";
@@ -41,7 +42,7 @@ export async function loadGh(Astro: AstroGlobal, lang: Lang): Promise<Response |
         viewerToken: viewer?.token,
         viewerLogin: viewer?.login,
         cache: viewer || typeof caches === "undefined" ? undefined : (caches as any).default,
-        loopback: ["localhost", "127.0.0.1", "[::1]"].includes(Astro.url.hostname),
+        localGh: isLocalGh(env, Astro.url),
     });
     const failed = (reason: keyof typeof REASON) => {
         const kind = REASON[reason];
@@ -63,7 +64,7 @@ export async function loadGh(Astro: AstroGlobal, lang: Lang): Promise<Response |
         if (ev.canonical) return Astro.redirect(`${base}/${ev.canonical}`);
         ok();
         const prs: any[] = ev.prs;
-        const active = prs.find((p) => p.state === "open") ?? prs.at(-1);
+        const active = ev.kind === "pr" ? prs[0] : (prs.find((p) => p.state === "open") ?? prs.findLast((p) => p.state === "merged"));
         const task: TaskDetails = {
             checks: (active?.checks.items ?? []).map((c: any) => ({ name: c.name, conclusion: c.conclusion, url: c.url })),
             reviews: (active?.reviews ?? []).map((v: any) => ({ state: v.state, author: v.author })),

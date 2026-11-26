@@ -1,5 +1,6 @@
 import githubAppJwt from "universal-github-app-jwt";
 import { SITE } from "../config/site.ts";
+import { isSynthetic } from "./auth.ts";
 import { derive, present, specHash } from "./stages.mjs";
 import { syntheticFetch } from "./synthetic/index.ts";
 
@@ -300,7 +301,7 @@ async function evidenceOf(n: any, c: Ctx) {
                 /<!-- spec-review v1 sha=([0-9a-f]+) verdict=(ready|questions)\b[^>]*-->/,
             ).map((x) => ({ verdict: x.m[2], sha: x.m[1], at: x.at, verified: x.verified })),
             specOk: specOk
-                ? { present: true, at: specOk.at, verified: true }
+                ? { present: true, at: specOk.at, verified: !!specOk.at }
                 : { present: false, verified: true },
         },
         writeTests,
@@ -318,14 +319,11 @@ export function createGithub(o: {
     viewerToken?: string;
     viewerLogin?: string;
     cache?: Cache;
-    loopback?: boolean;
+    localGh?: boolean;
 }) {
     const { env, viewerLogin, cache } = o;
-    const local = env.SITE_ORIGIN !== SITE.url;
-    const devToken = local && o.loopback && env.GITHUB_UPSTREAM === "gh" ? env.GITHUB_DEV_TOKEN : undefined;
-    const viewerToken = o.viewerToken ?? devToken;
-    const synthetic =
-        local && (env.GITHUB_UPSTREAM === "synthetic" || (!env.GITHUB_APP_ID && env.GITHUB_UPSTREAM !== "gh"));
+    const viewerToken = o.viewerToken ?? (o.localGh ? env.GITHUB_DEV_TOKEN : undefined);
+    const synthetic = isSynthetic(env);
     const f = o.fetch ?? (synthetic ? (syntheticFetch as typeof fetch) : globalThis.fetch);
     const budget = {
         requests: Number(env.REQUEST_BUDGET ?? SITE.requestBudget.requests),

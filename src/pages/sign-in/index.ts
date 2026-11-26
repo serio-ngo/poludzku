@@ -7,7 +7,7 @@ export const prerender = false;
 export const GET: APIRoute = ({ url }) => {
     const origin = originOf(url, env);
     const next = safeNext(url.searchParams.get("next") ?? defaultNext(url.pathname));
-    if (isLocalGh(env)) return new Response(null, { status: 302, headers: { location: next } });
+    if (isLocalGh(env, url)) return new Response(null, { status: 302, headers: { location: next } });
     const { state, cookie } = makeState(origin);
     const callback = callbackUrl(origin);
     const to = isSynthetic(env)

@@ -244,12 +244,12 @@ export function makeWorld(): Record<string, Repo> {
         issue(2, "Drugie tajne zadanie"),
     ]);
     add("pusto", {});
-    // Three pages of two; the person-owned task is on page 3.
+    // Fifteen pages of two: the default request budget (12) stops after page 12, so the person-owned task on page 15 is unread.
     add(
         "duzo",
         { pageSize: 2 },
-        [1, 2, 3, 4, 5, 6].map((n) =>
-            issue(n, `Zadanie ${n}`, n === 5 ? { assignees: ["ola"] } : {}),
+        Array.from({ length: 30 }, (_, i) =>
+            issue(i + 1, `Zadanie ${i + 1}`, i + 1 === 29 ? { assignees: ["ola"] } : {}),
         ),
     );
     add("awaria", { fail: true });

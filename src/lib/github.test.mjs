@@ -58,9 +58,15 @@ test("an empty list, a failed read and a partial list are three different answer
         partial.data.rows.map((r) => r.number),
         [1, 2],
     );
-    const full = await api().listTasks("przyklad", "duzo");
+    const dflt = await api().listTasks("przyklad", "duzo");
+    assert.equal(dflt.data.partial, true);
+    assert.equal(dflt.data.rows.length, 24);
+    const full = await createGithub({ env: { ...env, REQUEST_BUDGET: "99" } }).listTasks(
+        "przyklad",
+        "duzo",
+    );
     assert.equal(full.data.partial, false);
-    assert.equal(full.data.rows.length, 6);
+    assert.equal(full.data.rows.length, 30);
 });
 
 test("private repository: no token, wrong viewer and right viewer", async () => {

@@ -28,10 +28,12 @@ npm run dev
 Open <http://localhost:4321> and press the button: it opens `serio-ngo/poludzku`. `npm run dev`
 reads live GitHub with your own `gh auth token` on the local server (`GITHUB_UPSTREAM=gh` in
 `.dev.vars`, created from `.dev.vars.example`), so any repository you can read opens. This mode
-never runs in production. `GITHUB_UPSTREAM=synthetic` reads the invented test upstream instead.
+never runs in production. Never expose the dev server (`--host`, a tunnel): it reads with your
+token. `GITHUB_UPSTREAM=synthetic` reads the invented test upstream instead.
 
 Production reads through the GitHub App registered from `app-manifest.json` with GitHub's
-manifest flow; its values go in Worker secrets.
+manifest flow; its values go in Worker secrets. What is left before release is tracked in
+[serio-ngo/ops#140](https://github.com/serio-ngo/ops/issues/140).
 
 - `npm test` runs the unit tests.
 - `npm run check` runs types, links, build and unit tests.

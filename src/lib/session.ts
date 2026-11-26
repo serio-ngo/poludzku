@@ -91,5 +91,11 @@ export function checkState(request: Request, param: string | null) {
     return a !== "" && diff === 0;
 }
 
+// Same-origin path only. Control characters are refused: browsers strip tabs and newlines, so "/\t/evil.com" would become "//evil.com".
 export const safeNext = (next: string | null | undefined) =>
-    next && /^\/(?![/\\])[^\\]*$/.test(next) && next.length <= 200 ? next : "/";
+    next &&
+    next.length <= 200 &&
+    /^\/(?![/\\])[^\\\u0000-\u001f\u007f]*$/.test(next) &&
+    new URL(next, "https://x.invalid").origin === "https://x.invalid"
+        ? next
+        : "/";

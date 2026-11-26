@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "node scripts/dev-vars.mjs && astro dev --port 4321",
-    "build": "astro build && node -e \"require('fs').rmSync('dist/server/.dev.vars',{force:true})\"",
+    "build": "node scripts/build.mjs",
     "preview": "node scripts/dev-vars.mjs && astro preview --port 4321",
     "typecheck": "wrangler types && astro check",
     "test": "node --test --experimental-strip-types \"src/**/*.test.mjs\" \"tests/**/*.test.mjs\"",

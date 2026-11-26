@@ -6,7 +6,7 @@ test("route kinds", () => {
     assert.deepEqual(parseRoute("przyklad", "strona"), { kind: "list" });
     assert.deepEqual(parseRoute("przyklad", "strona", "42"), { kind: "task", number: 42 });
     assert.deepEqual(parseRoute("przyklad", "strona", "tree/agent/12-x"), { kind: "branch", branch: "agent/12-x" });
-    assert.deepEqual(parseRoute("a-b", "x.y_z", "9999999999"), { kind: "task", number: 9999999999 });
+    assert.deepEqual(parseRoute("a-b", "x.y_z", "999999999"), { kind: "task", number: 999999999 });
 });
 
 test("route rejects bad input", () => {

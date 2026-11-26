@@ -410,7 +410,7 @@ export function createGithub(o: {
 
     // Identity and access first, before any cache lookup. Missing, unauthorized and not-installed repositories all end as no-access.
     async function access(owner: string, name: string): Promise<Access> {
-        if (!/^[A-Za-z0-9-]{1,39}$/.test(owner) || !/^[A-Za-z0-9._-]{1,100}$/.test(name))
+        if (!/^[A-Za-z0-9-]{1,39}$/.test(owner) || !/^(?!\.+$)[A-Za-z0-9._-]{1,100}$/.test(name))
             return fail("no-access");
         const base = `${API}/repos/${owner}/${name}`;
         let raw: any, inst: any, token: string;

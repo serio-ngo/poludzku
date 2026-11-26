@@ -1,0 +1,61 @@
+---
+import Glyph from "./Glyph.astro";
+import Mover from "./Mover.astro";
+import { stageName, tone, type Lang, type View } from "./view.ts";
+
+interface Props {
+    view: View;
+    lang: Lang;
+}
+const { view, lang } = Astro.props;
+const open = view.outcome === "open";
+---
+
+<div class="tiles">
+    <div class="tile"><Mover view={view} lang={lang} size={28} nobody={!open} /></div>
+    {
+        open && (
+            <>
+                <div class="tile health" style={tone(view.healthGlyph)}>
+                    <Glyph name={view.healthGlyph as "circle"} lang={lang} size={28} />
+                </div>
+                <div class="tile">
+                    {view.next ? (
+                        <>
+                            <Glyph name="arrow-right" lang={lang} size={28} />
+                            <span>{stageName(lang, view.nextNameKey)}</span>
+                        </>
+                    ) : (
+                        <Glyph name="circle-help" lang={lang} size={28} />
+                    )}
+                </div>
+            </>
+        )
+    }
+</div>
+
+<style>
+    .tiles {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-4);
+        --mover-font: var(--weight-semibold) 1.375rem / 1.2 var(--font-display);
+    }
+    .tile {
+        flex: 1 1 200px;
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        min-width: 0;
+        padding: 20px;
+        background: var(--surface-card);
+        border: 1px solid var(--border-default);
+        border-radius: var(--radius-2);
+        font: var(--mover-font);
+        overflow-wrap: anywhere;
+    }
+    .health {
+        background: var(--s);
+        border-color: var(--c);
+    }
+</style>

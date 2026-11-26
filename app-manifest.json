@@ -1,0 +1,27 @@
+{
+  "name": "po ludzku",
+  "url": "https://poludzku.info",
+  "description": "Read-only view of GitHub tasks in plain words: one task, whose move, what next.",
+  "public": true,
+  "hook_attributes": {
+    "url": "https://poludzku.info/",
+    "active": false
+  },
+  "redirect_url": "http://localhost:4321/",
+  "callback_urls": [
+    "https://poludzku.info/sign-in/callback",
+    "http://localhost:4321/sign-in/callback"
+  ],
+  "request_oauth_on_install": false,
+  "setup_on_update": false,
+  "default_events": [],
+  "default_permissions": {
+    "metadata": "read",
+    "issues": "read",
+    "pull_requests": "read",
+    "checks": "read",
+    "statuses": "read",
+    "actions": "read",
+    "single_file": "read"
+  }
+}

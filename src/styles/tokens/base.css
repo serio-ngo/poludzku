@@ -1,0 +1,27 @@
+body {
+  margin: 0;
+  background: var(--surface-page);
+  color: var(--text-strong);
+  font: var(--type-answer);
+  text-wrap: pretty;
+  -webkit-font-smoothing: antialiased;
+}
+a {
+  color: var(--text-link);
+  text-decoration: none;
+  border-bottom: var(--border-hairline) solid var(--border-quiet);
+  transition: var(--transition-control);
+}
+a:hover {
+  color: var(--text-link-hover);
+  border-bottom-color: var(--ink-1);
+}
+input:focus-visible,
+select:focus-visible {
+  outline: var(--border-thick) solid var(--focus-ring);
+  outline-offset: 2px;
+}
+::selection {
+  background: var(--marker);
+  color: var(--ink-1);
+}

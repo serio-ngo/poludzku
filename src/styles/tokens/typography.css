@@ -1,0 +1,18 @@
+:root {
+  --text-mast: clamp(54px, 11.5vw, 136px);
+  --text-lead: clamp(30px, 4.6vw, 56px);
+  --text-title-2: 1.5rem;
+  --text-title-3: 1.25rem;
+
+  --leading-snug: 1.22;
+
+  --tracking-tight: -0.02em;
+  --tracking-mast: -0.045em;
+  --tracking-normal: 0;
+  --tracking-band: 0.16em;
+  --tracking-verdict: 0.18em;
+
+  --type-question: var(--weight-semibold) var(--text-title-3) / var(--leading-snug) var(--font-ui);
+  --type-answer: var(--weight-regular) var(--text-body) / var(--leading-body) var(--font-ui);
+  --type-band: var(--weight-semibold) var(--text-meta) / 1.4 var(--font-mono);
+}

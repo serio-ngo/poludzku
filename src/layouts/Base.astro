@@ -1,0 +1,64 @@
+---
+import { Font } from "astro:assets";
+import { SITE } from "../config/site.ts";
+import "../styles/styles.css";
+
+interface Props {
+    title: string;
+    lang?: "pl" | "en";
+    noindex?: boolean;
+    alternates?: { pl: string; en: string };
+    skipLabel?: string;
+}
+const { title, lang = "pl", noindex = false, alternates, skipLabel = "Przejdź do treści" } = Astro.props;
+const canonical = new URL(Astro.url.pathname, SITE.url).href.replace(/\/$/, "");
+---
+
+<!doctype html>
+<html lang={lang}>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>{title}</title>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/brand/app-icon.svg" />
+        <meta name="theme-color" content={SITE.themeColor} />
+        {noindex ? <meta name="robots" content="noindex, nofollow" /> : <link rel="canonical" href={canonical} />}
+        {
+            alternates && (
+                <>
+                    <link rel="alternate" hreflang="pl" href={new URL(alternates.pl, SITE.url).href} />
+                    <link rel="alternate" hreflang="en" href={new URL(alternates.en, SITE.url).href} />
+                    <link rel="alternate" hreflang="x-default" href={new URL(alternates.pl, SITE.url).href} />
+                </>
+            )
+        }
+        <Font cssVariable="--font-newsreader" preload />
+        <Font cssVariable="--font-libre-franklin" preload={[{ weight: 400 }]} />
+        <Font cssVariable="--font-jetbrains-mono" />
+        <slot name="head" />
+    </head>
+    <body>
+        <a class="pl-skip" href="#tresc">{skipLabel}</a>
+        <slot name="top" />
+        <main id="tresc" tabindex="-1">
+            <slot />
+        </main>
+        <slot name="foot" />
+    </body>
+</html>
+
+<style is:global>
+    html {
+        min-height: 100%;
+        scroll-padding-top: var(--topbar-height);
+    }
+    body {
+        min-height: 100vh;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+    }
+    main:focus {
+        outline: none;
+    }
+</style>

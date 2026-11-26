@@ -1,0 +1,28 @@
+---
+import Base from "../layouts/Base.astro";
+import Footer from "../components/Footer.astro";
+import TopBar from "../components/TopBar.astro";
+import Unavailable from "../components/Unavailable.astro";
+import { t } from "../locales/index.ts";
+import type { Lang } from "../components/view.ts";
+
+interface Props {
+    lang: Lang;
+}
+const { lang } = Astro.props;
+const en = lang === "en";
+---
+
+<Base title={t(lang).unavailable.notFound} lang={lang} noindex>
+    <TopBar slot="top" lang={lang} path={en ? "/en/404" : "/404"} signedIn={false} />
+    <div class="pl-page">
+        <Unavailable kind="notFound" lang={lang} action={{ href: en ? "/en" : "/", glyph: "arrow-right", label: t(lang).nav.home }} />
+    </div>
+    <Footer slot="foot" lang={lang} />
+</Base>
+
+<style>
+    div {
+        padding-block: 3rem;
+    }
+</style>

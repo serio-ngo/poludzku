@@ -1,0 +1,38 @@
+:root {
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-extrabold: 800;
+
+  --leading-body: 1.6;
+  --tracking-label: 0.14em;
+
+  --text-body-lg: 1.1875rem;
+  --text-body: 1.0625rem;
+  --text-body-sm: 0.9375rem;
+  --text-meta: 0.8125rem;
+  --text-label: 0.75rem;
+  --text-label-sm: 0.6875rem;
+
+  --type-label: var(--weight-semibold) var(--text-label) / 1 var(--font-mono);
+  --type-meta: var(--weight-regular) var(--text-meta) / 1 var(--font-mono);
+
+  --surface-page: var(--paper-1);
+  --surface-card: var(--paper-0);
+  --surface-sunken: var(--paper-2);
+  --surface-inverse: var(--ink-1);
+
+  --text-strong: var(--ink-1);
+  --text-muted: var(--ink-2);
+  --text-faint: var(--ink-3);
+  --text-faint-on-dark: var(--ink-3-on-dark);
+  --text-inverse: var(--paper-0);
+
+  --border-default: var(--line-1);
+  --border-quiet: var(--line-2);
+
+  --transition-control:
+    background-color var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out),
+    border-color var(--dur-2) var(--ease-out);
+}

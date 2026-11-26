@@ -1,0 +1,112 @@
+---
+import { t } from "../locales/index.ts";
+import Glyph from "./Glyph.astro";
+import { stageName, type Lang, type View } from "./view.ts";
+
+export interface TaskDetails {
+    checks: { name: string; conclusion: string | null; url?: string }[];
+    reviews: { state: string; author: string }[];
+    labels: { name: string }[];
+    prs: { number: number; url: string; title: string }[];
+    commits: { sha: string; url?: string }[];
+    deployments?: { name: string; url?: string }[];
+}
+interface Props {
+    view: View;
+    lang: Lang;
+    task: TaskDetails;
+}
+type Item = { key: string; text: string; href?: string; g?: string; note?: string; mono?: boolean };
+const { view, lang, task } = Astro.props;
+const d = t(lang);
+const a = d.answers;
+const sentences = [a.happening(view), a.stage(view, stageName(lang, view.stageNameKey)), a.health(view), a.mover(view), a.next(view, stageName(lang, view.nextNameKey))];
+const mark = (c: string | null) =>
+    c === "success" ? "circle-check" : c === "failure" || c === "timed_out" || c === "action_required" ? "circle-alert" : c === null || c === "pending" ? "circle-dashed" : "circle";
+const groups: [string, Item[]][] = [
+    [d.details.checks, task.checks.map((c) => ({ key: c.name, g: mark(c.conclusion), text: c.name, href: c.url, note: c.conclusion ?? "" }))],
+    [d.details.reviews, task.reviews.map((r) => ({ key: r.author + r.state, text: r.author, note: r.state.toLowerCase() }))],
+    [d.details.labels, task.labels.map((l) => ({ key: l.name, text: l.name }))],
+    [d.details.linked, task.prs.map((p) => ({ key: String(p.number), text: `#${p.number} ${p.title}`, href: p.url }))],
+    [d.details.commits, task.commits.map((c) => ({ key: c.sha, text: c.sha.slice(0, 7), href: c.url, mono: true }))],
+    [d.details.deployments, (task.deployments ?? []).map((x) => ({ key: x.name, text: x.name, href: x.url }))],
+];
+---
+
+<details>
+    <summary class="gl"><Glyph name="chevron-right" lang={lang} /></summary>
+    <div class="body">
+        {sentences.map((s) => <p>{s}</p>)}
+        {
+            groups.map(([label, items]) =>
+                items.length ? (
+                    <section>
+                        <h3>{label}</h3>
+                        <ul>
+                            {items.map((i) => (
+                                <li class:list={{ mono: i.mono }}>
+                                    {i.g && <Glyph name={i.g as "circle"} lang={lang} size={18} label="" />}
+                                    {i.href ? <a href={i.href}>{i.text}</a> : i.text}
+                                    {i.note && <small>{i.note}</small>}
+                                </li>
+                            ))}
+                        </ul>
+                    </section>
+                ) : null,
+            )
+        }
+    </div>
+</details>
+
+<style>
+    details {
+        border-top: 1px solid var(--border-default);
+        padding-top: var(--space-2);
+    }
+    summary {
+        list-style: none;
+        width: 44px;
+    }
+    summary::-webkit-details-marker {
+        display: none;
+    }
+    summary :global(svg) {
+        transition: transform var(--dur-2) var(--ease-out);
+    }
+    details[open] summary :global(svg) {
+        transform: rotate(90deg);
+    }
+    .body {
+        display: grid;
+        gap: var(--space-3);
+        padding-block: var(--space-4);
+    }
+    h3 {
+        font: var(--type-label);
+        letter-spacing: var(--tracking-label);
+        text-transform: uppercase;
+        color: var(--text-faint);
+        margin-bottom: var(--space-2);
+    }
+    ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2) var(--space-4);
+    }
+    li {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        overflow-wrap: anywhere;
+    }
+    .mono {
+        font-family: var(--font-mono);
+    }
+    small {
+        font: var(--type-meta);
+        color: var(--text-faint);
+    }
+</style>

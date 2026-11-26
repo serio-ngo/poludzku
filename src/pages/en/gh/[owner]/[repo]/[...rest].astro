@@ -1,0 +1,10 @@
+---
+import Gh from "../../../../../views/Gh.astro";
+import { loadGh } from "../../../../../lib/load.ts";
+
+export const prerender = false;
+const page = await loadGh(Astro, "en");
+if (page instanceof Response) return page;
+---
+
+<Gh lang="en" page={page} />

@@ -1,4 +1,4 @@
-# po ludzku
+# poludzku
 
 **GitHub work, in plain words. One task. Whose move. What next.**
 
@@ -12,23 +12,3 @@ Open source by [Fundacja Serio](https://serio.org.pl). Hosted at
 [poludzku.info](https://poludzku.info). Read-only. No ads, no tracking, no account for
 public repositories.
 
-## Status
-
-Planning. No application code yet. The contracts below are the source of truth; the
-[delivery plan](.prd/delivery.md) builds and verifies a runnable candidate in one session.
-
-## Reference
-
-- [Product](.prd/product.md) — what it says and does, scope, routes, access
-- [Stages](.prd/stages.md) — how GitHub evidence becomes a stage, health and a move
-- [Interface](.prd/interface.md) — calm UI rules, task and project screens
-- [Tech](.prd/tech.md) — Astro on Cloudflare, GitHub App, sessions, cache, reuse
-- [Business and marketing](.prd/business.md) — audience, model, channels, risks, acceptance
-- [Migration](.prd/migration.md) — replacing the po ludzku newsroom on poludzku.info
-- [Delivery](.prd/delivery.md) — one-session candidate, then release setup
-- [Agent instructions](AGENTS.md)
-
-## License
-
-Code: [MIT](LICENSE). Text in `.prd/` and `src/content/`: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
-The „po ludzku” and „serio” names and marks are not licensed for reuse.

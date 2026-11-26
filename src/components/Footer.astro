@@ -1,0 +1,57 @@
+---
+import { t } from "../locales/index.ts";
+import Glyph from "./Glyph.astro";
+import type { Lang } from "./view.ts";
+
+interface Props {
+    lang: Lang;
+    full?: boolean;
+}
+const { lang, full = false } = Astro.props;
+const f = t(lang).footer;
+const terms = lang === "en" ? "/en/terms" : "/terms";
+---
+
+<footer>
+    {
+        full ? (
+            <p>
+                <span>{f.publisher}</span>
+                <a href={terms}>{f.terms}</a>
+                <span>{f.licence}</span>
+                <a href="https://github.com/serio-ngo/poludzku">{f.source}</a>
+            </p>
+        ) : (
+            <a class="gl" href={terms}><Glyph name="scale" lang={lang} /></a>
+        )
+    }
+</footer>
+
+<style>
+    footer {
+        padding: var(--space-2) var(--page-gutter);
+        background: var(--surface-inverse);
+        color: var(--paper-2);
+        --focus-ring: var(--marker);
+        --text-faint: var(--text-faint-on-dark);
+    }
+    a {
+        color: var(--paper-0);
+    }
+    p {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0 var(--space-5);
+        padding-block: 2.5rem;
+        font-size: var(--text-body-sm);
+    }
+    p a {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+        border-bottom: 0;
+        text-decoration: underline;
+        text-underline-offset: 0.2em;
+    }
+</style>

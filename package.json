@@ -1,0 +1,36 @@
+{
+  "name": "poludzku",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "node scripts/dev-vars.mjs && astro dev --port 4321",
+    "build": "node scripts/build.mjs",
+    "preview": "node scripts/dev-vars.mjs && astro preview --port 4321",
+    "typecheck": "wrangler types && astro check",
+    "test": "node --test --experimental-strip-types \"src/app.test.mjs\"",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "knip": "knip",
+    "spell": "cspell --no-progress .",
+    "check": "npm run typecheck && npm run build && npm test"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "14.3.4",
+    "@lucide/astro": "1.44.0",
+    "astro": "7.3.8",
+    "universal-github-app-jwt": "2.2.2"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.12",
+    "@cspell/dict-pl_pl": "3.0.8",
+    "cspell": "10.5.2",
+    "knip": "6.48.0",
+    "prettier": "3.9.6",
+    "typescript": "6.0.3",
+    "wrangler": "4.168.0"
+  }
+}

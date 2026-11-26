@@ -1,0 +1,28 @@
+:root {
+  --marker-ink: var(--marker);
+  --marker-pad: 0.08em;
+  --arrow-ink: var(--signal);
+  --row-edge: var(--marker-deep);
+
+  --marker: #ffe066;
+  --marker-deep: #f5c518;
+
+  --signal: #ad2d0f;
+  --signal-soft: #fbe3da;
+  --calm: #2e6b4f;
+  --calm-soft: #ddebe2;
+  --watch: #1f4fd8;
+  --watch-soft: #dfe6fa;
+
+  --text-link: var(--signal);
+  --text-link-hover: var(--ink-1);
+
+  --state-change: var(--signal);
+  --state-change-surface: var(--signal-soft);
+  --state-nochange: var(--calm);
+  --state-nochange-surface: var(--calm-soft);
+  --state-watch: var(--watch);
+  --state-watch-surface: var(--watch-soft);
+  --focus-ring: var(--watch);
+  --shadow-stamp-sm: 2px 2px 0 var(--ink-1);
+}

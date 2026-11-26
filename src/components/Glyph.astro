@@ -1,0 +1,92 @@
+---
+import ArrowRight from "@lucide/astro/icons/arrow-right";
+import Bot from "@lucide/astro/icons/bot";
+import ChevronRight from "@lucide/astro/icons/chevron-right";
+import CircleAlert from "@lucide/astro/icons/circle-alert";
+import CircleCheck from "@lucide/astro/icons/circle-check";
+import CircleDashed from "@lucide/astro/icons/circle-dashed";
+import CircleOff from "@lucide/astro/icons/circle-off";
+import CirclePause from "@lucide/astro/icons/circle-pause";
+import Circle from "@lucide/astro/icons/circle";
+import CloudOff from "@lucide/astro/icons/cloud-off";
+import Cog from "@lucide/astro/icons/cog";
+import Ellipsis from "@lucide/astro/icons/ellipsis";
+import ExternalLink from "@lucide/astro/icons/external-link";
+import GitBranch from "@lucide/astro/icons/git-branch";
+import Hourglass from "@lucide/astro/icons/hourglass";
+import Inbox from "@lucide/astro/icons/inbox";
+import Lock from "@lucide/astro/icons/lock";
+import LogIn from "@lucide/astro/icons/log-in";
+import LogOut from "@lucide/astro/icons/log-out";
+import RefreshCw from "@lucide/astro/icons/refresh-cw";
+import Scale from "@lucide/astro/icons/scale";
+import SearchX from "@lucide/astro/icons/search-x";
+import UserRound from "@lucide/astro/icons/user-round";
+import CircleQuestionMark from "@lucide/astro/icons/circle-question-mark";
+import { t } from "../locales/index.ts";
+import type { Lang } from "./view.ts";
+
+interface Props {
+    name: keyof typeof GLYPHS;
+    lang: Lang;
+    size?: number;
+    label?: string;
+}
+
+const body = "var(--text-strong)", meta = "var(--text-faint)", link = "var(--text-link)";
+const GLYPHS = {
+    hourglass: [Hourglass, "var(--state-watch)"],
+    "circle-dashed": [CircleDashed, "var(--state-nochange)"],
+    "circle-check": [CircleCheck, "var(--state-nochange)"],
+    "circle-alert": [CircleAlert, "var(--state-change)"],
+    "circle-pause": [CirclePause, "var(--state-change)"],
+    circle: [Circle, meta],
+    "circle-help": [CircleQuestionMark, meta],
+    "user-round": [UserRound, body],
+    bot: [Bot, body],
+    cog: [Cog, body],
+    "circle-off": [CircleOff, meta],
+    "arrow-right": [ArrowRight, "var(--arrow-ink)"],
+    "external-link": [ExternalLink, link],
+    "refresh-cw": [RefreshCw, link],
+    "chevron-right": [ChevronRight, body],
+    "log-in": [LogIn, link],
+    "log-out": [LogOut, link],
+    scale: [Scale, meta],
+    lock: [Lock, body],
+    "cloud-off": [CloudOff, body],
+    "git-branch": [GitBranch, body],
+    "search-x": [SearchX, body],
+    inbox: [Inbox, body],
+    ellipsis: [Ellipsis, body],
+} as const;
+const { name, lang, size = 24, label } = Astro.props;
+const [Icon, color] = GLYPHS[name];
+const word = label ?? t(lang).glyph[name].word;
+---
+
+<span class="g" style={`color:${color}`} title={word || undefined}>
+    <Icon size={size} aria-hidden="true" />
+    {word && <span class="sr-only">{word}</span>}
+</span>
+
+<style>
+    .g {
+        display: inline-flex;
+        flex: none;
+    }
+</style>
+
+<style is:global>
+    .gl {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 44px;
+        min-height: 44px;
+        border: 0;
+        background: none;
+        padding: 0;
+        cursor: pointer;
+    }
+</style>

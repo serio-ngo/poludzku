@@ -1,0 +1,59 @@
+---
+import { env } from "cloudflare:workers";
+import Base from "../../layouts/Base.astro";
+import Footer from "../../components/Footer.astro";
+import TopBar from "../../components/TopBar.astro";
+import Unavailable from "../../components/Unavailable.astro";
+import { callbackUrl, clearOauthCookies, langOf, originOf, readNext } from "../../lib/auth.ts";
+import { createGithub } from "../../lib/github.ts";
+import { checkState, createSession, sessionCookie } from "../../lib/session.ts";
+import { SITE } from "../../config/site.ts";
+import { t } from "../../locales/index.ts";
+
+export const prerender = false;
+const { request, url } = Astro;
+const origin = originOf(url, env);
+const next = readNext(request);
+const lang = langOf(next);
+const code = url.searchParams.get("code");
+const cookies = clearOauthCookies(origin);
+
+let reason: "expired" | "unavailable" | null = "expired";
+if (code && checkState(request, url.searchParams.get("state"))) {
+    const gh = createGithub({ env });
+    const tok = await gh.exchangeCode(code, callbackUrl(origin));
+    const who = tok.ok ? await gh.getViewer(tok.data.token) : tok;
+    reason = who.ok ? null : who.reason === "expired" ? "expired" : "unavailable";
+    if (tok.ok && who.ok) {
+        const expiresAt = Math.min(tok.data.expiresAt, Date.now() + SITE.sessionHours * 3_600_000);
+        try {
+            const id = await createSession(env, { token: tok.data.token, login: who.data.login, expiresAt });
+            cookies.push(sessionCookie(id, origin, Math.max(1, Math.floor((expiresAt - Date.now()) / 1000))));
+        } catch {
+            reason = "unavailable";
+        }
+    }
+}
+if (!reason) {
+    const headers = new Headers({ location: next });
+    for (const c of cookies) headers.append("set-cookie", c);
+    return new Response(null, { status: 302, headers });
+}
+Astro.response.status = reason === "expired" ? 400 : 502;
+for (const c of cookies) Astro.response.headers.append("set-cookie", c);
+const en = lang === "en";
+---
+
+<Base title={t(lang).unavailable[reason]} lang={lang} noindex>
+    <TopBar slot="top" lang={lang} path={en ? "/en" : "/"} signedIn={false} />
+    <div class="pl-page">
+        <Unavailable kind={reason} lang={lang} action={{ href: `/sign-in?next=${encodeURIComponent(next)}`, glyph: reason === "expired" ? "log-in" : "refresh-cw" }} />
+    </div>
+    <Footer slot="foot" lang={lang} />
+</Base>
+
+<style>
+    div {
+        padding-block: 3rem;
+    }
+</style>

@@ -1,0 +1,29 @@
+---
+interface Props {
+    login: string;
+    size?: number;
+    marker?: boolean;
+}
+const { login, size = 24, marker = false } = Astro.props;
+---
+
+<span class:list={["av", { marker }]}>
+    <img src={`/avatar/${encodeURIComponent(login)}`} alt="" width={size} height={size} loading="lazy" />
+</span>
+
+<style>
+    .av {
+        display: inline-flex;
+        flex: none;
+        border-radius: 999px;
+    }
+    .marker {
+        background: var(--marker);
+        padding: 3px;
+    }
+    img {
+        border-radius: 50%;
+        display: block;
+        background: var(--surface-sunken);
+    }
+</style>

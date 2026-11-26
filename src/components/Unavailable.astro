@@ -1,0 +1,48 @@
+---
+import { t } from "../locales/index.ts";
+import Glyph from "./Glyph.astro";
+import type { Lang } from "./view.ts";
+
+interface Props {
+    kind: "noAccess" | "unavailable" | "expired" | "noTask" | "notFound" | "empty" | "partial";
+    lang: Lang;
+    action?: { href: string; glyph: "external-link" | "refresh-cw" | "log-in" | "arrow-right"; label?: string };
+}
+const { kind, lang, action } = Astro.props;
+const GLYPH = { noAccess: "lock", unavailable: "cloud-off", expired: "log-in", noTask: "git-branch", notFound: "search-x", empty: "inbox", partial: "ellipsis" } as const;
+const TONE: Partial<Record<Props["kind"], string>> = { unavailable: "watch", partial: "watch", empty: "nochange" };
+---
+
+<div class={`card ${TONE[kind] ?? ""}`}>
+    <Glyph name={GLYPH[kind]} lang={lang} size={28} label="" />
+    <p>{t(lang).unavailable[kind]}</p>
+    {action && <a class="gl" href={action.href}><Glyph name={action.glyph} lang={lang} label={action.label} /></a>}
+</div>
+
+<style>
+    .card {
+        display: grid;
+        justify-items: start;
+        gap: var(--space-3);
+        padding: 20px;
+        border: var(--border-mid) solid var(--ink-1);
+        border-radius: var(--radius-2);
+    }
+    .watch {
+        border: 1px solid var(--state-watch);
+        background: var(--state-watch-surface);
+    }
+    .nochange {
+        border: 1px solid var(--state-nochange);
+        background: var(--state-nochange-surface);
+    }
+    .watch > :global(.g:first-child svg) {
+        color: var(--state-watch);
+    }
+    .nochange > :global(.g:first-child svg) {
+        color: var(--state-nochange);
+    }
+    p {
+        font: var(--weight-semibold) 1.25rem / 1.3 var(--font-display);
+    }
+</style>

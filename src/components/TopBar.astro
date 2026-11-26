@@ -1,0 +1,60 @@
+---
+import { t } from "../locales/index.ts";
+import Glyph from "./Glyph.astro";
+import type { Lang } from "./view.ts";
+
+interface Props {
+    lang: Lang;
+    path: string;
+    signedIn: boolean;
+}
+const { lang, path, signedIn } = Astro.props;
+const home = lang === "en" ? "/en" : "/";
+const other = lang === "en" ? path.replace(/^\/en(?=\/|$)/, "") || "/" : path === "/" ? "/en" : `/en${path}`;
+---
+
+<header>
+    <a class="pl-wm" href={home} style="--wm-size: 1.5rem"><span class="pl-wm__name">po ludzku</span></a>
+    <nav>
+        <a class="gl lang" href={other} hreflang={lang === "en" ? "pl" : "en"}>{t(lang).nav.lang}</a>
+        {
+            signedIn ? (
+                <form method="post" action="/sign-out">
+                    <button class="gl" type="submit"><Glyph name="log-out" lang={lang} /></button>
+                </form>
+            ) : (
+                <a class="gl" href={`/sign-in?next=${encodeURIComponent(path)}`}><Glyph name="log-in" lang={lang} /></a>
+            )
+        }
+    </nav>
+</header>
+
+<style>
+    header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-2) var(--space-4);
+        min-height: var(--topbar-height);
+        padding-inline: var(--page-gutter);
+        border-bottom: 1px solid var(--border-default);
+        background: var(--surface-page);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    .pl-wm {
+        font-family: var(--font-display);
+        font-weight: var(--weight-semibold);
+        min-height: 44px;
+    }
+    nav {
+        display: flex;
+        align-items: center;
+    }
+    .lang {
+        font: var(--weight-medium) 0.875rem / 1 var(--font-mono);
+        color: var(--text-muted);
+    }
+</style>

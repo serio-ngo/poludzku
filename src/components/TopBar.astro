@@ -14,7 +14,7 @@ const other = lang === "en" ? path.replace(/^\/en(?=\/|$)/, "") || "/" : path ==
 ---
 
 <header>
-    <a class="pl-wm" href={home} style="--wm-size: 1.5rem"><span class="pl-wm__name">po ludzku</span></a>
+    <a class="pl-wm" href={home} style="--wm-size: 1.5rem" aria-label="po ludzku"><span class="pl-wm__name">po<span class="hl">ludzku</span></span></a>
     <nav>
         <a class="gl lang" href={other} hreflang={lang === "en" ? "pl" : "en"}>{t(lang).nav.lang}</a>
         {
@@ -48,6 +48,14 @@ const other = lang === "en" ? path.replace(/^\/en(?=\/|$)/, "") || "/" : path ==
         font-family: var(--font-display);
         font-weight: var(--weight-semibold);
         min-height: 44px;
+    }
+    .pl-wm__name {
+        letter-spacing: var(--tracking-tight);
+    }
+    .hl {
+        background: var(--marker);
+        padding: 0 0.08em;
+        margin-left: 0.06em;
     }
     nav {
         display: flex;

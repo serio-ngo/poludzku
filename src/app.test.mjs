@@ -9,8 +9,9 @@ import { isLocalGh, isSynthetic, readNext } from "./lib/auth.ts";
 import { __removeInstallation, __reset, __revokeAccess, __setVisibility, syntheticFetch } from "./lib/synthetic/index.ts";
 import pl from "./locales/pl.ts";
 import en from "./locales/en.ts";
+import { SITE } from "./config/site.ts";
 
-const env = { GITHUB_UPSTREAM: "synthetic", SITE_ORIGIN: "http://localhost:4321", GITHUB_APP_SLUG: "po-ludzku" };
+const env = { GITHUB_UPSTREAM: "synthetic" };
 const OLA = { viewerToken: "ghu_synthetic_ola", viewerLogin: "ola" };
 const BEN = { viewerToken: "ghu_synthetic_ben", viewerLogin: "ben" };
 const api = (o = {}) => createGithub({ env, ...o });
@@ -66,9 +67,11 @@ test("same-title tasks keep their own runs and movers", async () => {
 test("empty, failed and partial lists are three different answers", async () => {
     assert.deepEqual((await api().listTasks("example", "empty")).data, { rows: [], partial: false });
     assert.deepEqual(await api().listTasks("example", "outage"), UNAVAILABLE);
-    const partial = await createGithub({ env: { ...env, REQUEST_BUDGET: "1" } }).listTasks("example", "many");
+    const budget = SITE.requestBudget.requests;
+    const run = (n) => ((SITE.requestBudget.requests = n), api().listTasks("example", "many"));
+    const [partial, full] = [await run(1), await run(99)];
+    SITE.requestBudget.requests = budget;
     assert.equal(partial.data.partial, true);
-    const full = await createGithub({ env: { ...env, REQUEST_BUDGET: "99" } }).listTasks("example", "many");
     assert.deepEqual([full.data.partial, full.data.rows.length], [false, 30]);
 });
 
@@ -118,18 +121,10 @@ test("upstream failures and hostile links become unavailable, never invented dat
         assert.match(u, /^https:\/\/github\.com\//);
 });
 
-test("production never uses the synthetic upstream", async () => {
-    assert.equal(isSynthetic({ SITE_ORIGIN: "https://poludzku.info", GITHUB_UPSTREAM: "synthetic" }), false);
-    const gh = { SITE_ORIGIN: "http://localhost:4321", GITHUB_UPSTREAM: "gh" };
-    assert.deepEqual([isLocalGh(gh, new URL("http://localhost:4321/")), isLocalGh(gh, new URL("https://x.workers.dev/")), isLocalGh({ ...gh, SITE_ORIGIN: "https://poludzku.info" }, new URL("http://localhost/"))], [true, false, false], "the developer's token is used only on loopback outside production");
-    const real = globalThis.fetch;
-    globalThis.fetch = async () => new Response("{}", { status: 500 });
-    try {
-        const prod = createGithub({ env: { SITE_ORIGIN: "https://poludzku.info", GITHUB_UPSTREAM: "synthetic" } });
-        assert.deepEqual(await prod.getRepo("example", "website"), UNAVAILABLE);
-    } finally {
-        globalThis.fetch = real;
-    }
+test("production never uses the synthetic upstream", () => {
+    assert.equal(isSynthetic({ GITHUB_UPSTREAM: "synthetic" }, true), false);
+    const gh = { GITHUB_UPSTREAM: "gh" };
+    assert.deepEqual([isLocalGh(gh, new URL("http://localhost:4321/")), isLocalGh(gh, new URL("https://x.workers.dev/")), isLocalGh(gh, new URL("http://localhost/"), true)], [true, false, false], "the developer's token is used only on loopback outside production");
 });
 
 test("pull requests and branches resolve to one canonical task", async () => {

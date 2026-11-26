@@ -23,7 +23,10 @@ export const onRequest = defineMiddleware(async ({ request, url, locals }, next)
         h.set("X-Robots-Tag", "noindex");
         h.set(
             "Cache-Control",
-            snapshot && !rec ? `public, max-age=${SITE.cacheSeconds}` : "private, no-store",
+            // HTML is never cached by the browser: every view re-checks access. Only public avatar bytes may be.
+            snapshot && url.pathname.startsWith("/avatar/")
+                ? `public, max-age=${SITE.cacheSeconds}`
+                : "private, no-store",
         );
     }
     if (locals.sessionState === "expired") h.append("Set-Cookie", clearSessionCookie(url.origin));

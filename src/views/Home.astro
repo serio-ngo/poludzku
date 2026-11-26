@@ -1,8 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
 import Footer from "../components/Footer.astro";
-import Legend from "../components/Legend.astro";
-import Sample from "../components/Sample.astro";
 import TopBar from "../components/TopBar.astro";
 import { Content as HomePl } from "../content/home.md";
 import { Content as HomeEn } from "../content/home.en.md";
@@ -22,18 +20,14 @@ const Intro = en ? HomeEn : HomePl;
     <TopBar slot="top" lang={lang} path={en ? "/en" : "/"} signedIn={false} />
     <div class="pl-page home">
         <h1>{d.tagline.before}<mark class="pl-mark">{d.tagline.marked}</mark>{d.tagline.after}</h1>
-        <div class="cols">
-            <div class="entry">
-                <Intro />
-                <form method="get" action={en ? "/en/otworz" : "/otworz"}>
-                    <label class="sr-only" for="r">{d.entry.label}</label>
-                    <input id="r" name="r" placeholder={d.entry.placeholder} required autocapitalize="off" autocomplete="off" spellcheck="false" />
-                    <button type="submit">{d.entry.button}</button>
-                </form>
-            </div>
-            <Sample lang={lang} />
+        <div class="entry">
+            <Intro />
+            <form method="get" action={en ? "/en/otworz" : "/otworz"}>
+                <label class="sr-only" for="r">{d.entry.label}</label>
+                <input id="r" name="r" value="serio-ngo/poludzku" placeholder={d.entry.placeholder} required autocapitalize="off" autocomplete="off" spellcheck="false" />
+                <button type="submit">{d.entry.button}</button>
+            </form>
         </div>
-        <Legend lang={lang} />
     </div>
     <Footer slot="foot" lang={lang} full />
 </Base>
@@ -49,19 +43,10 @@ const Intro = en ? HomeEn : HomePl;
         line-height: 1.04;
         letter-spacing: -0.02em;
     }
-    .cols {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 2rem;
-        align-items: start;
-    }
     .entry {
-        flex: 1 1 380px;
+        max-width: 40rem;
         display: grid;
         gap: var(--space-4);
-    }
-    .cols > :global(.sample) {
-        flex: 1 1 440px;
     }
     form {
         display: flex;

@@ -1,27 +1,5 @@
 import type { Dict, View } from "./index.ts"
 
-const NOTES: Record<string, Record<number, Partial<Record<"agent" | "person" | "automation", string>>>> = {
-  lifecycle: {
-    1: { agent: "An agent is writing the description.", person: "Someone is writing the description." },
-    2: { agent: "An agent is reviewing the description.", person: "Someone is answering questions about the description." },
-    3: { person: "Someone is approving the description." },
-    4: { agent: "An agent is preparing the tests.", person: "Someone is preparing the tests.", automation: "Automation is checking the tests." },
-    5: { person: "Someone is reviewing the tests." },
-    6: { agent: "An agent is writing the code.", person: "Someone is writing the code.", automation: "Automation is checking the code." },
-    7: { agent: "An agent is fixing the change.", person: "Someone is reviewing the change.", automation: "Automation is checking the change." },
-  },
-  generic: {
-    1: { agent: "An agent is starting the task.", person: "Someone is starting the task." },
-    2: { agent: "An agent is working on the change.", person: "Someone is working on the change." },
-    3: { automation: "Automation is checking the change.", person: "Someone is fixing the change.", agent: "An agent is fixing the change." },
-    4: { person: "Someone is reviewing the change.", automation: "Automation is checking the change." },
-    5: { agent: "An agent is fixing the change.", person: "Someone is fixing the change." },
-  },
-}
-
-const note = (v: View) =>
-  v.outcome === "open" && v.stage ? NOTES[v.preset]?.[v.stage.index]?.[v.mover.kind === "someone" || v.mover.kind === "person" ? "person" : v.mover.kind as "agent"] : undefined
-
 const open = (v: View) => v.outcome === "open"
 
 const en: Dict = {
@@ -70,7 +48,7 @@ const en: Dict = {
   stripLabel: (index, total, name) => `${index} of ${total} · ${name}`,
   answers: {
     happening: (v) =>
-      note(v) ?? (v.outcome === "done" ? "The change is in. Nobody needs to do anything."
+      (v.outcome === "done" ? "The change is in. Nobody needs to do anything."
       : v.outcome === "closed" ? "The task was closed without a change. Nobody needs to do anything."
       : v.mover.kind === "agent" ? "An agent is working on the task."
       : v.mover.kind === "automation" ? "Automation is checking the change."
@@ -126,13 +104,11 @@ const en: Dict = {
     commits: "Commits",
     deployments: "Deployments",
   },
-  sample: "Example",
   groups: { people: "A person moves", rest: "Others" },
   tagline: { before: "One task. ", marked: "Whose move.", after: " What next." },
   entry: { label: "owner/repo or a GitHub address", placeholder: "owner/repo", button: "Open" },
   footer: { publisher: "Fundacja Serio", terms: "Terms", licence: "MIT licence", source: "Source code" },
   nav: { lang: "PL", home: "Home" },
-  sampleTitle: "Add an article footer",
   readAt: (time) => `Read at ${time}`,
 }
 

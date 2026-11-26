@@ -15,7 +15,7 @@ public repositories.
 ## Status
 
 v1 candidate: the task and project screens, the stage engine, sessions and the GitHub App
-sign-in are built and verified locally. It is not yet a public release. The contracts below
+sign-in are built. It is not yet a public release. The contracts below
 are the source of truth; the [delivery plan](.prd/delivery.md) says what release still needs.
 
 ## Run it
@@ -25,17 +25,16 @@ npm ci
 npm run dev
 ```
 
-Open <http://localhost:4321>. This needs no account: with `GITHUB_UPSTREAM=synthetic` it reads
-invented repositories under the owner `przyklad`, for example `/gh/przyklad/strona`.
+Open <http://localhost:4321> and press the button: it opens `serio-ngo/poludzku`. `npm run dev`
+reads live GitHub with your own `gh auth token` on the local server (`GITHUB_UPSTREAM=gh` in
+`.dev.vars`, created from `.dev.vars.example`), so any repository you can read opens. This mode
+never runs in production. `GITHUB_UPSTREAM=synthetic` reads the invented test upstream instead.
 
-For live mode, copy `.dev.vars.example` to `.dev.vars` and fill in your GitHub App's values.
-Register the App from `app-manifest.json` with GitHub's manifest flow.
+Production reads through the GitHub App registered from `app-manifest.json` with GitHub's
+manifest flow; its values go in Worker secrets.
 
 - `npm test` runs the unit tests.
-- `npm run test:e2e` runs the browser tests.
-- `npm run a11y` runs the accessibility check.
-- `npm run gates` runs the product gates.
-- `npm run check` runs types, format, dead code, spelling, links, gates, build and unit tests.
+- `npm run check` runs types, links, build and unit tests.
 
 ## Reference
 

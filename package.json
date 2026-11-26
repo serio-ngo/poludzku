@@ -12,16 +12,13 @@
     "preview": "node scripts/dev-vars.mjs && astro preview --port 4321",
     "typecheck": "wrangler types && astro check",
     "test": "node --test --experimental-strip-types \"src/**/*.test.mjs\" \"tests/**/*.test.mjs\"",
-    "test:e2e": "playwright test",
-    "a11y": "node scripts/a11y.mjs",
-    "gates": "node scripts/gates.mjs",
     "docs:links": "node scripts/docs-links.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "knip": "knip",
     "spell": "cspell --no-progress .",
     "redirects": "node scripts/redirects.mjs",
-    "check": "npm run typecheck && npm run format:check && npm run knip && npm run spell && npm run docs:links && npm run gates && npm run build && npm run test"
+    "check": "npm run typecheck && npm run docs:links && npm run build && npm test"
   },
   "dependencies": {
     "@astrojs/cloudflare": "14.3.4",

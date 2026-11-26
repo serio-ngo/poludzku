@@ -1,0 +1,17 @@
+# Local development. `npm run dev` copies this file to .dev.vars when that file is missing.
+# The origin the local server answers on. Production sets https://poludzku.info in wrangler.jsonc.
+SITE_ORIGIN=http://localhost:4321
+# "gh": read live GitHub with your own `gh auth token` (local only; npm run dev fills GITHUB_DEV_TOKEN).
+# "synthetic": the invented test upstream. Empty: the GitHub App below.
+GITHUB_UPSTREAM=gh
+GITHUB_DEV_TOKEN=
+# GitHub App numeric id.
+GITHUB_APP_ID=
+# GitHub App URL slug, used for the install link.
+GITHUB_APP_SLUG=
+# App private key converted to PKCS#8 (see .prd/tech.md); never commit it.
+GITHUB_APP_PRIVATE_KEY=
+# OAuth client id of the same App.
+GITHUB_CLIENT_ID=
+# OAuth client secret of the same App.
+GITHUB_CLIENT_SECRET=

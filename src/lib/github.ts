@@ -326,10 +326,14 @@ export function createGithub(o: {
     viewerLogin?: string;
     cache?: Cache;
 }) {
-    const { env, viewerToken, viewerLogin, cache } = o;
+    const { env, viewerLogin, cache } = o;
+    const local = env.SITE_ORIGIN !== SITE.url;
+    // Local only: the developer's own `gh` token, read on the server, never in production.
+    const devToken = local && env.GITHUB_UPSTREAM === "gh" ? env.GITHUB_DEV_TOKEN : undefined;
+    const viewerToken = o.viewerToken ?? devToken;
     // Never synthetic in production, whatever else is set.
     const synthetic =
-        env.SITE_ORIGIN !== SITE.url && (env.GITHUB_UPSTREAM === "synthetic" || !env.GITHUB_APP_ID);
+        local && (env.GITHUB_UPSTREAM === "synthetic" || (!env.GITHUB_APP_ID && !devToken));
     const f = o.fetch ?? (synthetic ? (syntheticFetch as typeof fetch) : globalThis.fetch);
     // Pages of one list read, first pages excluded; a test or e2e run lowers it to force a partial list.
     const budget = {
@@ -411,7 +415,8 @@ export function createGithub(o: {
         if (viewerToken) {
             token = viewerToken;
             raw = await req(base, token);
-            inst = await req(`${base}/installation`, await jwt());
+            // Without an App (local `gh` mode) GitHub's own access check on the viewer token is the only gate.
+            inst = env.GITHUB_APP_ID || synthetic ? await req(`${base}/installation`, await jwt()) : { id: 0 };
         } else {
             inst = await req(`${base}/installation`, await jwt());
             token = await installToken(inst.id);

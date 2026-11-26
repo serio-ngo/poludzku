@@ -14,10 +14,9 @@ const movers = ["viewer", "person", "someone", "agent", "automation", "nobody", 
 test("PL and EN have identical shape", () => assert.deepEqual(shape(pl), shape(en)))
 
 for (const [lang, d] of [["pl", pl], ["en", en]]) {
-  test(`${lang}: no empty strings, glyph words, short unavailable views, legend`, () => {
+  test(`${lang}: no empty strings, glyph words, short unavailable views`, () => {
     for (const s of strings(d)) assert.ok(s.trim())
     for (const g of table) assert.ok(d.glyph[g]?.word)
-    assert.deepEqual(d.legend.slice(), table.slice(0, 20))
     for (const s of Object.values(d.unavailable)) assert.ok(s.split(/\s+/).length <= 3)
   })
   test(`${lang}: answers cover every combination`, () => {
@@ -34,15 +33,6 @@ for (const [lang, d] of [["pl", pl], ["en", en]]) {
   })
 }
 
-test("stage-specific happening", () => {
-  const v = (preset, index, kind) => ({ preset, outcome: "open", health: "pending", mover: { kind }, stage: { index, total: 7 }, next: null })
-  assert.equal(pl.answers.happening(v("lifecycle", 4, "agent")), "Agent przygotowuje testy.")
-  assert.equal(pl.answers.happening(v("lifecycle", 5, "person")), "Ktoś sprawdza testy.")
-  assert.equal(pl.answers.happening(v("generic", 3, "automation")), "Automat sprawdza zmianę.")
-  assert.equal(pl.answers.happening(v("custom", 2, "agent")), "Agent pracuje nad zadaniem.")
-  assert.equal(en.answers.happening(v("lifecycle", 4, "agent")), "An agent is preparing the tests.")
-  assert.match(pl.answers.next({ outcome: "open", next: { index: 5 } }, "Testy"), /^Potem/)
-})
 
 test("stripLabel", () => {
   assert.equal(pl.stripLabel(4, 7, "Testy"), "4 z 7 · Testy")

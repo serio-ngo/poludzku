@@ -8,28 +8,6 @@ export type View = {
   stageNameKey?: unknown
 }
 
-const NOTES: Record<string, Record<number, Partial<Record<"agent" | "person" | "automation", string>>>> = {
-  lifecycle: {
-    1: { agent: "Agent pisze opis.", person: "Ktoś pisze opis." },
-    2: { agent: "Agent sprawdza opis.", person: "Ktoś odpowiada na pytania do opisu." },
-    3: { person: "Ktoś zatwierdza opis." },
-    4: { agent: "Agent przygotowuje testy.", person: "Ktoś przygotowuje testy.", automation: "Automat sprawdza testy." },
-    5: { person: "Ktoś sprawdza testy." },
-    6: { agent: "Agent pisze kod.", person: "Ktoś pisze kod.", automation: "Automat sprawdza kod." },
-    7: { agent: "Agent poprawia zmianę.", person: "Ktoś sprawdza zmianę.", automation: "Automat sprawdza zmianę." },
-  },
-  generic: {
-    1: { agent: "Agent zaczyna zadanie.", person: "Ktoś zaczyna zadanie." },
-    2: { agent: "Agent pracuje nad zmianą.", person: "Ktoś pracuje nad zmianą." },
-    3: { automation: "Automat sprawdza zmianę.", person: "Ktoś poprawia zmianę.", agent: "Agent poprawia zmianę." },
-    4: { person: "Ktoś sprawdza zmianę.", automation: "Automat sprawdza zmianę." },
-    5: { agent: "Agent poprawia zmianę.", person: "Ktoś poprawia zmianę." },
-  },
-}
-
-const note = (v: View) =>
-  v.outcome === "open" && v.stage ? NOTES[v.preset]?.[v.stage.index]?.[v.mover.kind === "someone" || v.mover.kind === "person" ? "person" : v.mover.kind as "agent"] : undefined
-
 const open = (v: View) => v.outcome === "open"
 
 export default {
@@ -77,8 +55,8 @@ export default {
   outcome: { done: "gotowe", closed: "zamknięte" },
   stripLabel: (index: number, total: number, name: string) => `${index} z ${total} · ${name}`,
   answers: {
-    happening: (v: View) =>
-      note(v) ?? (v.outcome === "done" ? "Zmiana weszła. Nikt nie musi nic robić."
+    happening: (v: View): string =>
+      (v.outcome === "done" ? "Zmiana weszła. Nikt nie musi nic robić."
       : v.outcome === "closed" ? "Zadanie zamknięto bez zmiany. Nikt nie musi nic robić."
       : v.mover.kind === "agent" ? "Agent pracuje nad zadaniem."
       : v.mover.kind === "automation" ? "Automat sprawdza zmianę."
@@ -86,7 +64,7 @@ export default {
       : v.mover.kind === "person" || v.mover.kind === "someone" ? "Zadanie czeka na człowieka."
       : v.mover.kind === "nobody" ? "Nikt teraz nie pracuje nad zadaniem."
       : "Nie wiadomo, co się dzieje."),
-    stage: (v: View, name: string) =>
+    stage: (v: View, name: string): string =>
       v.outcome === "done" ? "Wszystkie etapy za nami."
       : v.outcome === "closed" ? "Zadanie zamknięto przed końcem."
       : v.stage ? `Etap ${v.stage.index} z ${v.stage.total}: ${name}.`
@@ -99,7 +77,7 @@ export default {
       : v.health === "parked" ? "Wstrzymane, czeka na człowieka."
       : v.health === "no-checks" ? "Nie zgłoszono żadnych sprawdzeń."
       : "Nie wiadomo. Brak danych.",
-    mover: (v: View, login?: string) =>
+    mover: (v: View, login?: string): string =>
       v.mover.kind === "viewer" ? "Ruch jest Twój."
       : v.mover.kind === "person" ? `Ruch ma ${login ?? v.mover.login ?? "ktoś"}.`
       : v.mover.kind === "someone" ? "Ruch ma ktoś."
@@ -107,7 +85,7 @@ export default {
       : v.mover.kind === "automation" ? "Ruch ma automat."
       : v.mover.kind === "nobody" ? "Nikt nie musi nic robić."
       : "Nie wiadomo, kto ma ruch.",
-    next: (v: View, name: string) =>
+    next: (v: View, name: string): string =>
       !open(v) ? "Nic dalej."
       : v.next ? `Potem etap: ${name}.`
       : "Nie wiadomo, co dalej.",
@@ -134,12 +112,10 @@ export default {
     commits: "Commity",
     deployments: "Wdrożenia",
   },
-  sample: "Przykład",
   groups: { people: "Ruch człowieka", rest: "Pozostałe" },
   tagline: { before: "Jedno zadanie. ", marked: "Czyj ruch.", after: " Co dalej." },
   entry: { label: "owner/repo lub adres z GitHuba", placeholder: "owner/repo", button: "Otwórz" },
   footer: { publisher: "Fundacja Serio", terms: "Regulamin", licence: "Licencja MIT", source: "Kod źródłowy" },
   nav: { lang: "EN", home: "Strona główna" },
-  sampleTitle: "Dodanie stopki do artykułu",
   readAt: (time: string) => `Odczytano o ${time}`,
 }

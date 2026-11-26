@@ -36,7 +36,8 @@ const terms = lang === "en" ? "/en/regulamin" : "/regulamin";
     p {
         display: flex;
         flex-wrap: wrap;
-        gap: var(--space-2) var(--space-5);
+        align-items: center;
+        gap: 0 var(--space-5);
         padding-block: var(--space-3);
         font-size: var(--text-body-sm);
         color: var(--text-muted);
@@ -45,5 +46,8 @@ const terms = lang === "en" ? "/en/regulamin" : "/regulamin";
         display: inline-flex;
         align-items: center;
         min-height: 44px;
+        border-bottom: 0;
+        text-decoration: underline;
+        text-underline-offset: 0.2em;
     }
 </style>

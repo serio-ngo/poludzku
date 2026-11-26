@@ -27,7 +27,7 @@ List open issues and open pull requests. Follow pagination within the request bu
 
 | Route | View |
 | --- | --- |
-| `/` | A short introduction from `src/content/home.md`, one synthetic sample and an entry point for opening a GitHub repository. |
+| `/` | A short introduction from `src/content/home.md`, one synthetic sample, the glyph legend and an entry point for opening a GitHub repository. |
 | `/<slug>` | A Markdown article from `src/content/pages/`. |
 | `/gh/<owner>/<repo>` | One list for the repository the viewer opened. |
 | `/gh/<owner>/<repo>/<number>` | The canonical task, its five answers, stage strip and folded technical details. |
@@ -36,6 +36,8 @@ List open issues and open pull requests. Follow pagination within the request bu
 | `/regulamin` | Terms covering the publisher, session data, retention and tracking policy. |
 
 Polish is served at the root and English under `/en`. Both variants preserve the same routes. The sample uses synthetic data and is visibly identified. The home page has no organization tabs or repository directory.
+
+The terms name the publisher: Fundacja Serio, ul. Lema 2C/57, 80-126 Gdańsk, KRS 0001260622, NIP 5833576778, REGON 545486785, kontakt@serio.org.pl. Nothing ships as a placeholder: every page uses real values or, in the sample and fixtures, invented data.
 
 ## The five answers
 
@@ -46,6 +48,8 @@ Polish is served at the root and English under `/en`. Both variants preserve the
 | Czy wszystko w porządku? | Health from checks, runs and the parked state, never the stage alone | "Praca trwa." / "Nie. Sprawdzenie nie przeszło." |
 | Czyj ruch? | The mover: `Ty`, a named person, a generic person, `agent`, `automat`, `nikt` or unknown | "Ty" |
 | Co dalej? | The next stage or checkpoint, one sentence | "Potem ktoś sprawdzi testy." |
+
+On a tool screen each answer is a glyph with at most one word. Its sentence lives in the folded details and in the glyph's accessible name: see the [text budget](interface.md#text-budget).
 
 "Czyj ruch" is the product: a status without an owner tells a reader nothing to do.
 
@@ -69,7 +73,7 @@ The viewer opens a specific repository that has opted in through installation of
 - The App reads without access to code; its permissions are in [tech.md](tech.md#the-github-app).
 - A signed-in viewer stays signed in for the 8 hours GitHub gives the token, then signs in again with one click.
 
-The browser stores only the signed-in session cookie. There is no tracking. Live tool pages use `noindex`, show when GitHub data was read and provide a manual reload link. The interface supports keyboard use, conveys stage and state in text and keeps technical details folded. [Interface contract](interface.md)
+The browser stores only the signed-in session cookie. There is no tracking. Live tool pages use `noindex`, show when GitHub data was read and provide a manual reload link. The interface supports keyboard use, gives every glyph its words for assistive technology and keeps the sentences and technical details folded. [Interface contract](interface.md)
 
 ## Still open
 

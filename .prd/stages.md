@@ -1,6 +1,6 @@
 # Stages
 
-The stage engine is a pure JavaScript function. It takes normalized, already authorized GitHub evidence and returns a process stage, technical health, mover, and the evidence for each result. A presentation function turns that result into the five localized answers. Reading GitHub, rendering links, and taking any suggested action happen outside the engine. The service never changes a task.
+The stage engine is a pure JavaScript function. It takes normalized, already authorized GitHub evidence and returns a process stage, technical health, mover, and the evidence for each result. A presentation function turns that result into the five localized answers and picks each answer's glyph from [interface.md](interface.md#glyphs). Reading GitHub, rendering links, and taking any suggested action happen outside the engine. The service never changes a task.
 
 The engine is `src/lib/stages.mjs`: plain JavaScript with JSDoc, no import and no network inside it, so Node tests and Astro load the same file. After release the lifecycle console loads this file instead of keeping its own derivation; two copies would drift.
 

@@ -26,8 +26,10 @@ const path = (lang === "en" ? "/en/" : "/") + slug;
 
 <style>
     article {
-        max-width: 65ch;
-        padding-block: 3rem 4rem;
+        padding-block: 4rem 6rem;
+    }
+    article > :global(*) {
+        max-width: 42.5rem;
     }
     article > :global(* + *) {
         margin-top: var(--space-4);
@@ -36,6 +38,6 @@ const path = (lang === "en" ? "/en/" : "/") + slug;
         margin-top: 2rem;
     }
     h1 {
-        font-size: clamp(2rem, 5vw, 3rem);
+        font-size: clamp(2rem, 5vw, 3.25rem);
     }
 </style>

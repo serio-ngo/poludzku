@@ -55,21 +55,22 @@ const Intro = en ? HomeEn : HomePl;
     }
     input {
         flex: 1 1 14rem;
-        min-height: 44px;
-        padding: 0 var(--space-3);
-        font: var(--weight-medium) 1rem / 1 var(--font-mono);
+        min-height: 46px;
+        padding: 0 14px;
+        font: var(--weight-regular) var(--text-body) / 1 var(--font-ui);
         color: var(--ink-1);
         background: var(--surface-card);
-        border: 1px solid var(--ink-1);
-        border-radius: 0;
+        border: var(--border-mid) solid var(--ink-1);
+        border-radius: var(--radius-1);
     }
     button {
-        min-height: 44px;
+        min-height: 46px;
         padding: 0 var(--space-5);
-        font: var(--weight-semibold) 1rem / 1 var(--font-ui);
+        font: var(--weight-semibold) var(--text-body) / 1 var(--font-ui);
         color: var(--ink-1);
         background: var(--marker);
-        border: 1px solid var(--ink-1);
+        border: var(--border-mid) solid var(--ink-1);
+        border-radius: var(--radius-1);
         box-shadow: var(--shadow-stamp-sm);
         cursor: pointer;
     }

@@ -1,7 +1,7 @@
 ---
 import Article from "../../views/Article.astro";
 export const prerender = true;
-export const getStaticPaths = () => ["terms", "newsroom"].map((slug) => ({ params: { slug }, props: { slug } }));
+export const getStaticPaths = () => ["terms"].map((slug) => ({ params: { slug }, props: { slug } }));
 const { slug } = Astro.props;
 ---
 

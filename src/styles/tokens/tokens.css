@@ -23,6 +23,8 @@
   --border-hairline: 1px;
   --border-mid: 1.5px;
   --border-thick: 2px;
+  --radius-1: 3px;
+  --radius-2: 6px;
   --hairline: var(--border-hairline) solid var(--line-1);
   --rule: var(--border-thick) solid var(--ink-1);
 

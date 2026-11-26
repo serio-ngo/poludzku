@@ -51,6 +51,7 @@ const canonical = new URL(Astro.url.pathname, SITE.url).href.replace(/\/$/, "");
 <style is:global>
     html {
         min-height: 100%;
+        scroll-padding-top: var(--topbar-height);
     }
     body {
         min-height: 100vh;

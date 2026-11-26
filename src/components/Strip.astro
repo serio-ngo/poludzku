@@ -49,7 +49,7 @@ const label = unknown ? d.glyph["circle-help"].word : open ? d.stripLabel(cur, t
         --dot: 8px;
         --cur: 14px;
         --bw: 1.5px;
-        width: 112px;
+        width: 96px;
         max-width: 100%;
     }
     ol {
@@ -81,7 +81,7 @@ const label = unknown ? d.glyph["circle-help"].word : open ? d.stripLabel(cur, t
     li:last-child::after {
         display: none;
     }
-    span {
+    li > span {
         position: relative;
         z-index: 1;
         display: grid;
@@ -107,6 +107,9 @@ const label = unknown ? d.glyph["circle-help"].word : open ? d.stripLabel(cur, t
         background: var(--s);
         border: var(--bw) solid var(--c);
         box-shadow: var(--shadow-stamp-sm);
+    }
+    .sm .cur span {
+        box-shadow: none;
     }
     p {
         margin-top: var(--space-3);

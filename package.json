@@ -29,7 +29,6 @@
     "@cspell/dict-pl_pl": "3.0.8",
     "cspell": "10.5.2",
     "knip": "6.48.0",
-    "pa11y-ci": "4.1.1",
     "prettier": "3.9.6",
     "typescript": "6.0.3",
     "wrangler": "4.168.0"

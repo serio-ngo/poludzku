@@ -25,7 +25,7 @@ const { view, lang, href, number, title } = Astro.props;
 <style>
     .row {
         display: grid;
-        grid-template-columns: 3.25rem 1.5rem 112px minmax(0, 1fr) minmax(9rem, auto);
+        grid-template-columns: 3.25rem 1.5rem 96px minmax(0, 1fr) minmax(9rem, auto);
         align-items: center;
         column-gap: 20px;
         padding: 18px 12px;
@@ -39,6 +39,9 @@ const { view, lang, href, number, title } = Astro.props;
     }
     .mine {
         background: var(--surface-card);
+    }
+    .m {
+        display: flex;
     }
     .n {
         font: var(--weight-medium) 0.9375rem / 1.4 var(--font-mono);

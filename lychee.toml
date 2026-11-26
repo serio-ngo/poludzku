@@ -1,2 +1,0 @@
-accept = ["200", "202", "206", "999"]
-exclude = ['^https://(www\.)?(poludzku\.info|serio\.org\.pl)']

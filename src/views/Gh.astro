@@ -24,7 +24,7 @@ const title = p.page === "task" ? p.ev.title : `${owner}/${repo}`;
     ) : (
         <Base title={title} lang={lang} noindex>
             <TopBar slot="top" lang={lang} path={Astro.url.pathname} signedIn={!!Astro.locals.viewer} />
-            <div class="pl-page">
+            <div class:list={["pl-page", { task: p.page === "task" }]}>
                 {p.page === "unavailable" && <Unavailable kind={p.kind} lang={lang} action={p.action} />}
                 {p.page === "list" && <Project lang={lang} owner={owner} repo={repo} {...p} />}
                 {p.page === "task" && <Task lang={lang} owner={owner} repo={repo} {...p} />}
@@ -37,5 +37,8 @@ const title = p.page === "task" ? p.ev.title : `${owner}/${repo}`;
 <style>
     .pl-page {
         padding-block: 2.5rem 6rem;
+    }
+    .task > :global(*) {
+        max-width: 880px;
     }
 </style>

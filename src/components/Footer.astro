@@ -30,16 +30,21 @@ const terms = lang === "en" ? "/en/terms" : "/terms";
 <style>
     footer {
         padding: var(--space-2) var(--page-gutter);
-        border-top: 1px solid var(--border-default);
+        background: var(--surface-inverse);
+        color: var(--paper-2);
+        --focus-ring: var(--marker);
+        --text-faint: var(--text-faint-on-dark);
+    }
+    a {
+        color: var(--paper-0);
     }
     p {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
         gap: 0 var(--space-5);
-        padding-block: var(--space-3);
+        padding-block: 2.5rem;
         font-size: var(--text-body-sm);
-        color: var(--text-muted);
     }
     p a {
         display: inline-flex;

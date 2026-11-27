@@ -28,6 +28,7 @@
   "devDependencies": {
     "@astrojs/check": "0.9.12",
     "@cspell/dict-pl_pl": "3.0.8",
+    "@playwright/test": "1.65.1",
     "cspell": "10.5.2",
     "knip": "6.48.0",
     "prettier": "3.9.6",

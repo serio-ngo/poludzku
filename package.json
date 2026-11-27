@@ -23,6 +23,7 @@
     "@astrojs/cloudflare": "14.3.4",
     "@lucide/astro": "1.44.0",
     "astro": "7.3.8",
+    "find-the-gap": "github:serio-ngo/find-the-gap#ab21b8e67db6cea02150c1f0d7e9babd859527b2",
     "universal-github-app-jwt": "2.2.2"
   },
   "devDependencies": {

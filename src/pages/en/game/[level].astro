@@ -1,0 +1,8 @@
+---
+import GamePage from "../../../views/GamePage.astro";
+import { decks } from "find-the-gap/game/levels/index.ts";
+export const prerender = true;
+export const getStaticPaths = () => decks.observations.levels.map((l) => ({ params: { level: String(l.id) } }));
+---
+
+<GamePage lang="en" level={Number(Astro.params.level)} />

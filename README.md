@@ -14,5 +14,5 @@ public repositories.
 
 
 It also hosts [Find the Gap](https://github.com/serio-ngo/find-the-gap), the open research game, at
-[poludzku.info/game](https://poludzku.info/game) (English at `/en/game`). The game's research picks go
-to its own D1 table through `/api/game/`.
+[poludzku.info/game](https://poludzku.info/game) (English at `/en/game`). Only when a player turns research on are their picks sent,
+without any identifier, to the game's own D1 tables through `/api/game/`; a leaderboard nickname is stored only when entered.

@@ -49,6 +49,10 @@ Processors:
 - Cloudflare: hosting of the service.
 - GitHub: sign-in and data source, under GitHub's own terms.
 
+## Find the Gap game
+
+The game at `/en/game` needs no account and stores no IP address. Your picks go to research only when you turn the research switch on yourself: we then store the day, the game version and level, and the course of play, with no identifier. A leaderboard nickname is stored only when you enter one, together with the score; the top ten scores are public. The legal basis is your consent (Article 6(1)(a) GDPR). The data is deleted after 365 days. We delete a nickname earlier on request to kontakt@serio.org.pl.
+
 ## Availability
 
 The service is provided without warranty. It may be unavailable or show data with a delay.

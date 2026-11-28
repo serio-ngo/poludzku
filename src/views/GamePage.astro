@@ -1,7 +1,7 @@
 ---
 import Game from "find-the-gap/game/Game.astro";
 import { SITE } from "../config/site.ts";
-import { GAME_API, langPrefix } from "../lib/entry.ts";
+import { GAME_API, langPrefix, termsPath } from "../lib/entry.ts";
 
 interface Props {
     lang: "pl" | "en";
@@ -36,6 +36,6 @@ const description =
         <link rel="alternate" hreflang={lang === "pl" ? "en" : "pl"} href={`${SITE.url}${path(lang === "pl" ? "en" : "pl")}`} />
     </head>
     <body>
-        <Game level={level} lang={lang} api={GAME_API} />
+        <Game level={level} lang={lang} api={GAME_API} privacy={termsPath(lang)} />
     </body>
 </html>

@@ -16,6 +16,7 @@ export function entryPath(input: string): string | null {
 
 export const langPrefix = (lang: "pl" | "en") => (lang === "en" ? "/en" : "");
 export const GAME_API = "/api/game";
+export const termsPath = (lang: "pl" | "en") => `${langPrefix(lang)}/terms`;
 
 export function entryRedirect(url: URL, lang: "pl" | "en"): Response {
     const prefix = langPrefix(lang);

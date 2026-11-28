@@ -1,0 +1,41 @@
+---
+import Game from "find-the-gap/game/Game.astro";
+import { SITE } from "../config/site.ts";
+import { GAME_API, langPrefix, termsPath } from "../lib/entry.ts";
+
+interface Props {
+    lang: "pl" | "en";
+    level: number;
+}
+const { lang, level } = Astro.props;
+const previews = import.meta.glob("/node_modules/find-the-gap/src/game/levels/preview-*.png", {
+    eager: true,
+    import: "default",
+}) as Record<string, ImageMetadata>;
+const preview = previews[`/node_modules/find-the-gap/src/game/levels/preview-${level}.png`];
+const path = (l: "pl" | "en") => `${langPrefix(l)}/game/${level}`;
+const title = `Find the Gap #${level}`;
+const description =
+    lang === "pl"
+        ? "Krótka gra na prawdziwych danych z cyklu życia oprogramowania z AI: znajdź lukę i porównaj się z AI."
+        : "A short game on real data from an AI software lifecycle: find the gap and compare yourself with AI.";
+---
+
+<!doctype html>
+<html lang={lang}>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={`${SITE.url}${path(lang)}`} />
+        {preview && <meta property="og:image" content={new URL(preview.src, SITE.url).href} />}
+        <meta name="twitter:card" content="summary_large_image" />
+        <link rel="alternate" hreflang={lang === "pl" ? "en" : "pl"} href={`${SITE.url}${path(lang === "pl" ? "en" : "pl")}`} />
+    </head>
+    <body>
+        <Game level={level} lang={lang} api={GAME_API} privacy={termsPath(lang)} />
+    </body>
+</html>

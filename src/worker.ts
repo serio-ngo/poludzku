@@ -1,5 +1,7 @@
 import { handle } from "@astrojs/cloudflare/handler";
 import { DurableObject } from "cloudflare:workers";
+import { GAME_API } from "./lib/entry.ts";
+import { route as game } from "find-the-gap/game/worker/route.ts";
 import { deleteRec, getRec, putRec, type SessionRec } from "./lib/session.ts";
 
 export class SessionDO extends DurableObject {
@@ -17,4 +19,10 @@ export class SessionDO extends DurableObject {
     }
 }
 
-export default { fetch: handle };
+export default {
+    fetch(req: Request, env: Env, ctx: ExecutionContext) {
+        return new URL(req.url).pathname.startsWith(`${GAME_API}/`)
+            ? game(req, { DB: env.GAME_DB, LIMIT: env.RL_GAME }, ctx)
+            : handle(req, env, ctx);
+    },
+};

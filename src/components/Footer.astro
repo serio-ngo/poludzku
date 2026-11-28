@@ -1,6 +1,7 @@
 ---
 import { t } from "../locales/index.ts";
 import Glyph from "./Glyph.astro";
+import { termsPath } from "../lib/entry.ts";
 import type { Lang } from "./view.ts";
 
 interface Props {
@@ -9,7 +10,7 @@ interface Props {
 }
 const { lang, full = false } = Astro.props;
 const f = t(lang).footer;
-const terms = lang === "en" ? "/en/terms" : "/terms";
+const terms = termsPath(lang);
 ---
 
 <footer>

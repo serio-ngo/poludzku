@@ -49,6 +49,10 @@ Podmioty przetwarzające:
 - Cloudflare: hosting serwisu.
 - GitHub: logowanie i źródło danych, na własnych zasadach GitHuba.
 
+## Gra Find the Gap
+
+Gra pod `/game` nie zakłada konta i nie zapisuje adresu IP. Przebieg rozgrywki (dzień, wersja i poziom gry, odwiedzone pokoje, odczytane wskazówki, typy, czasy) zapisujemy do badań tylko wtedy, gdy sam włączysz przełącznik badań albo zapiszesz wynik z pseudonimem, bez identyfikatora gracza. Pseudonim do rankingu zapisujemy tylko, gdy go wpiszesz, razem z wynikiem; dziesięć najlepszych wyników jest widocznych publicznie. Podstawą jest Twoja zgoda (art. 6 ust. 1 lit. a RODO). Dane usuwamy po 365 dniach. Pseudonim usuniemy wcześniej na prośbę wysłaną na kontakt@serio.org.pl.
+
 ## Dostępność serwisu
 
 Serwis działa bez gwarancji. Może być niedostępny lub pokazywać dane z opóźnieniem.

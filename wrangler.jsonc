@@ -5,6 +5,12 @@
   "compatibility_flags": ["nodejs_compat"],
   "durable_objects": { "bindings": [{ "name": "SESSIONS", "class_name": "SessionDO" }] },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["SessionDO"] }],
+  "d1_databases": [{ "binding": "GAME_DB", "database_name": "ask-db", "database_id": "334c87bc-8aa1-4b1a-94ee-676a7caee288" }],
+  "ratelimits": [{ "name": "RL_GAME", "namespace_id": "2095", "simple": { "limit": 30, "period": 60 } }],
   "assets": { "html_handling": "drop-trailing-slash" },
-  "previews": { "durable_objects": { "bindings": [{ "name": "SESSIONS", "class_name": "SessionDO" }] } },
+  "previews": {
+    "durable_objects": { "bindings": [{ "name": "SESSIONS", "class_name": "SessionDO" }] },
+    "d1_databases": [{ "binding": "GAME_DB", "database_name": "ask-db-preview", "database_id": "72cb0489-8c84-43fe-a9d7-8e2597b53adc" }],
+    "ratelimits": [{ "name": "RL_GAME", "namespace_id": "3095", "simple": { "limit": 30, "period": 60 } }],
+  },
 }

@@ -12,3 +12,7 @@ Open source by [Fundacja Serio](https://serio.org.pl). Hosted at
 [poludzku.info](https://poludzku.info). Read-only. No ads, no tracking, no account for
 public repositories.
 
+
+It also hosts [Find the Gap](https://github.com/serio-ngo/find-the-gap), the open research game, at
+[poludzku.info/game](https://poludzku.info/game) (English at `/en/game`). The game's research picks go
+to its own D1 table through `/api/game/`.

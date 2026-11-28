@@ -1,6 +1,7 @@
 ---
 import Game from "find-the-gap/game/Game.astro";
 import { SITE } from "../config/site.ts";
+import { GAME_API, langPrefix } from "../lib/entry.ts";
 
 interface Props {
     lang: "pl" | "en";
@@ -12,7 +13,7 @@ const previews = import.meta.glob("/node_modules/find-the-gap/src/game/levels/pr
     import: "default",
 }) as Record<string, ImageMetadata>;
 const preview = previews[`/node_modules/find-the-gap/src/game/levels/preview-${level}.png`];
-const path = (l: "pl" | "en") => `${l === "en" ? "/en" : ""}/game/${level}`;
+const path = (l: "pl" | "en") => `${langPrefix(l)}/game/${level}`;
 const title = `Find the Gap #${level}`;
 const description =
     lang === "pl"
@@ -35,6 +36,6 @@ const description =
         <link rel="alternate" hreflang={lang === "pl" ? "en" : "pl"} href={`${SITE.url}${path(lang === "pl" ? "en" : "pl")}`} />
     </head>
     <body>
-        <Game level={level} lang={lang} api="/api/game" />
+        <Game level={level} lang={lang} api={GAME_API} />
     </body>
 </html>

@@ -14,8 +14,11 @@ export function entryPath(input: string): string | null {
     return base;
 }
 
+export const langPrefix = (lang: "pl" | "en") => (lang === "en" ? "/en" : "");
+export const GAME_API = "/api/game";
+
 export function entryRedirect(url: URL, lang: "pl" | "en"): Response {
-    const prefix = lang === "en" ? "/en" : "";
+    const prefix = langPrefix(lang);
     const path = entryPath(url.searchParams.get("r") ?? "");
     return new Response(null, {
         status: 302,
